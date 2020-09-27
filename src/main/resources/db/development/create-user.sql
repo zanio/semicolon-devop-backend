@@ -1,0 +1,11 @@
+DROP DATABASE IF EXISTS ds_suite;
+
+CREATE DATABASE IF NOT EXISTS ds_suite;
+
+DROP USER IF EXISTS 'ds_suite'@'%';
+
+CREATE USER 'ds_suite'@'%'; IDENTIFIED BY 'ds_suite_123'
+
+GRANT ALL PRIVILEGES ON ds_suite.* TO 'ds_suite'@'%';
+
+FLUSH PRIVILEGES ;
