@@ -153,11 +153,7 @@
             <artifactId>hibernate-validator</artifactId>
             <version>6.0.18.Final</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>3.7.02</version>
-        </dependency>
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
