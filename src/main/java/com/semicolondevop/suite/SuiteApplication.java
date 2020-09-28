@@ -23,9 +23,13 @@ public class SuiteApplication {
     @Value("${cloudinary.api_secret}")
     private String apiSecret;
 
+    private  static String  myfile = "my file is \"go\"";
+
     public static void main(String[] args) {
         SpringApplication.run(SuiteApplication.class, args);
     }
+
+
 
 
     @Bean
