@@ -10,7 +10,7 @@ before_install:
 #  - grant all privileges on database mydb to myuser
 #  - psql -c 'create user ds_suite with encrypted password \'ds_suite\'';
   - psql -c "create user ds_suite_admin with encrypted password 'ds_suite_123';"
-  - psql -c 'create database ds_suite;' -U ds_suite_admin
+  - psql -c 'create database ds_suite;'
   - psql -c 'grant all privileges on ds_suite to ds_suite_admin;'
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker pull openjdk:11-jre-slim-sid
