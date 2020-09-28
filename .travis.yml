@@ -1,9 +1,6 @@
 language: java
 jdk:
   - openjdk11
-env:
-  - $DOCKER_PASSWORD=BAry250@@&&
-  - $DOCKER_USERNAME=zanio
 services:
   - docker
 
