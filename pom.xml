@@ -167,10 +167,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <addResources>true</addResources>
-                    <classifier>exec</classifier>
-                </configuration>
+                <version>2.3.4.RELEASE</version>
                 <executions>
                     <execution>
                         <goals>
@@ -179,7 +176,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
