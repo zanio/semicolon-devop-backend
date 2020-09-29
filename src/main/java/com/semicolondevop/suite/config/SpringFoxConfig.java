@@ -64,7 +64,7 @@ public class SpringFoxConfig  extends WebSecurityConfigurerAdapter {
                         new Tag("Investment Services","All Api related to investment services"),
                         new Tag("Password Services","All Api related to Password services"),
                         new Tag("Admin Statistics Services","All Api related to Admin Statistics services"),
-                        new Tag("Saver Services","All Api related to Saver services"),
+                        new Tag("Developer Services","All Api related to Developer services"),
                         new Tag("User Investment Services","All Api related to User Investment services")
                         );
 
@@ -73,11 +73,11 @@ public class SpringFoxConfig  extends WebSecurityConfigurerAdapter {
 
     private ApiInfo getApiInfo() {
         return new ApiInfo(
-                "Alaajo",
+                "DS-SUITE",
                 "DESCRIPTION",
                 "1.0.0",
                 "TERMS OF SERVICE URL",
-                new Contact("NAME", "URL", "EMAIL"),
+                new Contact("Semicolon-devops-suite", "https://semicolon-ds-staging.herokuapp.com/", "EMAIL"),
                 "LICENSE",
                 "LICENSE URL",
                 Collections.emptyList());
