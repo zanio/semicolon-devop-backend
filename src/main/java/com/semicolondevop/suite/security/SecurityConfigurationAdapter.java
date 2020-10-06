@@ -76,7 +76,7 @@ public class SecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 //                .authenticationProvider(provider)
                 .addFilterBefore(jwtGenericAuthorization, UsernamePasswordAuthenticationFilter.class)
                 .addFilter(jwtAuthorizationLoginFilter())
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(new JWTAuthenticationFilter(authenticationManager(),getApplicationContext()))
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .antMatchers(WEB_SOCKET_ENDPOINT,WEB_SOCKET_ENDPOINT_GROUP).permitAll()
@@ -86,7 +86,7 @@ public class SecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, ADMIN_URL+"/new").hasAuthority("ROLE_SUPER_ADMIN")
                 .requestMatchers(ADMIN_URLS).hasAnyAuthority("ROLE_ADMIN","ROLE_SUPER_ADMIN")
                 .antMatchers("/api/*").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN")
-                .antMatchers(HttpMethod.GET, "/api/savers/confirm").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/developers/confirm").permitAll()
                 .antMatchers(HttpMethod.POST, "/alaajo/paystack/event").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -147,7 +147,7 @@ public class SecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     }
 
     public JWTAuthenticationFilter jwtAuthorizationLoginFilter() throws Exception {
-        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(authenticationManager());
+        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(authenticationManager(),getApplicationContext());
         jwtAuthenticationFilter.setFilterProcessesUrl("/api/auth/login");
         return jwtAuthenticationFilter;
     }

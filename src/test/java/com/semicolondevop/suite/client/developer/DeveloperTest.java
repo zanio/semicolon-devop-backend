@@ -143,7 +143,9 @@ public class DeveloperTest {
         HttpEntity<String> entity = new HttpEntity<String>(developerLoginDto.toString(), headers);
         log.info("The method tostring {}", entity);
 
-        ResponseEntity<GithubDeveloperDao> response = null;
+        ResponseEntity<String> response = null;
+      response=   restTemplate.exchange(getRootUrl() + "user",
+                HttpMethod.GET, entity, String.class);
     }
 
 

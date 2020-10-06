@@ -1,5 +1,6 @@
 package com.semicolondevop.suite.model.developer;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,15 +18,21 @@ public class GithubDeveloperDao {
     private String login;
     private String avatar_url;
     private String name;
+
     private String password;
+    @ApiModelProperty(hidden = true)
     private String firstname = "";
+    @ApiModelProperty(hidden = true)
     private String lastname ="";
+
     private String phoneNUmber;
     private String authId;
 
+    @ApiModelProperty(hidden = true)
     public String getUserFirstname(){
        return this.getName().split(" ")[0];
     }
+    @ApiModelProperty(hidden = true)
     public String getUserLastname(){
         return this.getName().split(" ")[1];
     }
