@@ -64,7 +64,7 @@ public class PasswordResetListener implements ApplicationListener<OnPasswordRese
         this.setUrl(event.getAppUrl()+"/api/password/confirm?token="+event.getToken());
         this.setSubject("Password Reset Confirmation");
         this.setAdmin(user);
-        String recipientAddress = this.getAdmin().getEmail();
+        String recipientAddress = this.getAdmin().getUsername();
         String content = "Hi "+this.getAdmin().getFirstname()+"\n\nYour Requested to change your password, Please follow the link to reset your password " +
 
                 "\n\n using the  url below \n\n: "+this.getUrl()+"\n\n If you didn't request for a password reset please ignore this message";
@@ -88,7 +88,7 @@ public class PasswordResetListener implements ApplicationListener<OnPasswordRese
         this.setUrl(event.getAppUrl()+"/api/password/confirm?token="+event.getToken());
         this.setSubject("Password Reset Confirmation");
         this.setSaver(user);
-        String recipientAddress = this.getSaver().getEmail();
+        String recipientAddress = this.getSaver().getUsername();
         String content = "Hi "+this.getSaver().getFirstname()+"\n\nYour Requested to change your password, Please follow the link to reset your password " +
 
                 "\n\n using the  url below \n\n: "+this.getUrl()+"\n\n If you didn't request for a password reset please ignore this message";

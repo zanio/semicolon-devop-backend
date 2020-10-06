@@ -47,10 +47,10 @@ public class AdminServiceImpl extends DeveloperServiceImpl implements AdminServi
 
     @Override
     public Admin save(Admin admin) throws UserAlreadyExistException {
-        if (emailExists(admin.getEmail())) {
+        if (emailExists(admin.getUsername())) {
 
             log.error("USER EMAIL ACCOUNT ALREADY EXISTS <--> THROWING EXCEPTION");
-            throw new UserAlreadyExistException("There is an account with that email adress: " + admin.getEmail());
+            throw new UserAlreadyExistException("There is an account with that email adress: " + admin.getUsername());
         } else {
 
             log.info("CREATING NEW USER ACCOUNT!");

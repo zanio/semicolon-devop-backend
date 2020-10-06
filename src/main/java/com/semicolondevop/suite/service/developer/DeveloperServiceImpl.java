@@ -10,6 +10,7 @@ import com.semicolondevop.suite.client.dto.DeveloperDto;
 
 import com.semicolondevop.suite.client.exception.ResourceNotFound;
 import com.semicolondevop.suite.client.exception.UserAlreadyExistException;
+import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
 import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
 import com.semicolondevop.suite.model.developer.Developer;
@@ -54,27 +55,29 @@ public class DeveloperServiceImpl implements DeveloperService {
 
     /**
      *
-     * @param developer
+     * @param githubDeveloperDao
      * @return
      * @throws UserAlreadyExistException
      */
     @Override
-    public Developer registerAccount(Developer developer) throws UserAlreadyExistException {
+    public Developer registerAccount(GithubDeveloperDao githubDeveloperDao) throws UserAlreadyExistException {
+        Developer developer = null;
 
-        if (emailExists(developer.getEmail())) {
+        if (emailExists(githubDeveloperDao.getLogin())) {
 
             log.error("USER EMAIL ACCOUNT ALREADY EXISTS <--> THROWING EXCEPTION");
-            throw new UserAlreadyExistException("There is an account with that email address: " + developer.getEmail());
+            throw new UserAlreadyExistException("There is an account with that email address: " + githubDeveloperDao.getLogin());
         }
         else {
 
             log.info("CREATING NEW USER ACCOUNT!");
-            developer.setPassword(passwordEncoder.encode(developer.getPassword()));
+            githubDeveloperDao.setPassword(passwordEncoder.encode(githubDeveloperDao.getPassword()));
 
-            ApplicationUser details = new ApplicationUser(developer);
+            ApplicationUser details = new ApplicationUser(githubDeveloperDao);
             userRepository.save(details);
 
             log.info("USER SAVED {} --> ",details);
+         developer = new Developer(githubDeveloperDao);
 
             developer.setApplicationUser(details);
             log.info("SAVE NEW SAVER DETAILS --> {} ",developer);
@@ -121,7 +124,7 @@ public class DeveloperServiceImpl implements DeveloperService {
      */
     @Override
     public void saveUserToken(String token, Developer developer) {
-        developer.setToken(token);
+        developer.setAuthId(token);
         developerRepositoryImp.save(developer);
     }
 
@@ -140,13 +143,13 @@ public class DeveloperServiceImpl implements DeveloperService {
 
     /**
      *
-     * @param token
+     * @param authId
      * @return
      */
     @Override
-    public Developer getToken(String token) {
+    public Developer getToken(String authId) {
 
-        return developerRepositoryImp.findByToken(token);
+        return developerRepositoryImp.findByToken(authId);
     }
 
     /**

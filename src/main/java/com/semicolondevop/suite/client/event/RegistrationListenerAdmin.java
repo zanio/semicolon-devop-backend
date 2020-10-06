@@ -64,9 +64,9 @@ public class RegistrationListenerAdmin implements ApplicationListener<OnAdminReg
         this.setUrl(event.getAppUrl()+"/api/admins/new");
         this.setSubject("Admin Notification");
         this.setAdmin(user);
-         String recipientAddress = this.getAdmin().getEmail();
+         String recipientAddress = this.getAdmin().getUsername();
          String content = "Congratulations! "+this.getAdmin().getFirstname()+"\n\nYou have been added as an admin " +
-                ", Please Login with the following credentials: \n\n Username: "+this.getAdmin().getEmail()+" \n Password: "+  event.getRawPassword()+"" +
+                ", Please Login with the following credentials: \n\n Username: "+this.getAdmin().getUsername()+" \n Password: "+  event.getRawPassword()+"" +
                 "\n\n using the  url below \n\n: "+this.getUrl()+"\n\n Please endeavor to change your password";
         final SimpleMailMessage email =
                 constructEmailMessage(content,recipientAddress,event.getLocale());

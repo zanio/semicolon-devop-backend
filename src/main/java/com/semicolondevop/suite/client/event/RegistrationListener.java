@@ -64,7 +64,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         this.setUrl(event.getAppUrl() + "/api/savers/confirm?token=" + token);
         this.setSubject("Registration Confirmation");
         this.setSaver(user);
-        final String recipientAddress = this.getSaver().getEmail();
+        final String recipientAddress = this.getSaver().getUsername();
         final String content = "Congratulations! "+this.getSaver().getFirstname()+"\n\nYou registered successfully. " +
                         "We will send you a confirmation message to your email account.";
         final SimpleMailMessage email = constructEmailMessage(content,recipientAddress,event.getLocale());
@@ -87,9 +87,9 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         this.setUrl(event.getAppUrl()+"/api/admins/new");
         this.setSubject("Registration Confirmation");
         this.setAdmin(admin);
-        final String recipientAddress = this.getAdmin().getEmail();
+        final String recipientAddress = this.getAdmin().getUsername();
         final String content = "Congratulations! "+this.getAdmin().getFirstname()+"\n\nYou have be added as an admin " +
-                ", Please Login to with the following credential: \n\n Email: "+this.getAdmin().getEmail()+" \n Password"+this.getAdmin().getPassword()+"" +
+                ", Please Login to with the following credential: \n\n Email: "+this.getAdmin().getUsername()+" \n Password"+this.getAdmin().getPassword()+"" +
                 "\n\n with the following url"+this.getUrl();
         final SimpleMailMessage email =
                 constructEmailMessage(content,recipientAddress,event.getLocale());

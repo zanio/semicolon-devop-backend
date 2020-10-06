@@ -14,10 +14,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DeveloperRepository extends JpaRepository<Developer, Integer> {
 
-    @Query("SELECT s FROM Developer s WHERE s.email = :email")
+    @Query("SELECT s FROM Developer s WHERE s.username = :email")
     Developer findByEmail(@Param("email") String email);
 
-    @Query("SELECT s FROM Developer s WHERE s.token = :token")
+    @Query("SELECT s FROM Developer s WHERE s.authId = :token")
     Developer findByToken(@Param("token") String token);
 
 

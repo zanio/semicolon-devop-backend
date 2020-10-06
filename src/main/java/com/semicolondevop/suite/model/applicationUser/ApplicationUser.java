@@ -1,4 +1,6 @@
 package com.semicolondevop.suite.model.applicationUser;
+
+
 /*
  *@author Aniefiok
  * created on 11/05/2020
@@ -7,11 +9,15 @@ package com.semicolondevop.suite.model.applicationUser;
 
 import com.semicolondevop.suite.model.admin.Admin;
 import com.semicolondevop.suite.model.developer.Developer;
+import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
+import com.semicolondevop.suite.service.developer.DeveloperService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
@@ -35,7 +41,6 @@ public class ApplicationUser implements GrantedAuthority {
 
     @Column(updatable = false, unique = true)
     @NotNull(message = "{NotNull.email}")
-    @Size(min=10, max=50)
     private String username;
 
     @ToString.Exclude
@@ -49,19 +54,30 @@ public class ApplicationUser implements GrantedAuthority {
     private UserActivityLogs userActivityLogs;
 
 
+
     public ApplicationUser(@NotNull Developer applicationUser) {
 
         this.id = generateId();
-        this.username = applicationUser.getEmail();
+        this.username = applicationUser.getUsername();
         this.password = applicationUser.getPassword();
         this.role = "USER";
         //set isActive to false upon creation
-        this.isActive = false;
+        this.isActive = true;
+    }
+
+    public ApplicationUser(@NotNull GithubDeveloperDao githubDeveloperDao) {
+
+        this.id = generateId();
+        this.username = githubDeveloperDao.getLogin();
+        this.password = githubDeveloperDao.getPassword();
+        this.role = "USER";
+        //set isActive to false upon creation
+        this.isActive = true;
     }
 
     public ApplicationUser(@NotNull Admin applicationAdmin) {
         this.id = generateId();
-        this.username = applicationAdmin.getEmail();
+        this.username = applicationAdmin.getUsername();
         this.password = applicationAdmin.getPassword();
         this.role = "ADMIN";
         this.isActive = true;

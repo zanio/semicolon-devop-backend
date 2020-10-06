@@ -13,8 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, Integer> {
 
-    @Query("SELECT s FROM Admin s WHERE s.email = :email")
-    Admin findByEmail(@Param("email") String email);
+    @Query("SELECT s FROM Admin s WHERE s.username = :username")
+    Admin findByEmail(@Param("username") String username);
 
 
 

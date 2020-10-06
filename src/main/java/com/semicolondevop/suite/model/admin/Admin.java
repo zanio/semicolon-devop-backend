@@ -40,7 +40,7 @@ public class Admin {
     @ApiModelProperty(hidden = true,readOnly = true)
     private Date dateJoined;
 
-    private String email;
+    private String username;
 
     private String password;
 
@@ -57,14 +57,12 @@ public class Admin {
     private ApplicationUser applicationUserId;
 
     public Admin(@NotNull Admin admin) {
-
         this.firstname = admin.getFirstname();
         this.lastname = admin.getLastname();
         this.phoneNumber = admin.getPhoneNumber();
-        this.email = admin.getEmail();
+        this.username = admin.getUsername();
         this.applicationUserId = admin.getApplicationUserId();
         this.password = admin.getPassword();
-
 
     }
 }

@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -23,14 +24,17 @@ import java.sql.Date;
 @Data
 @NoArgsConstructor
 @DynamicUpdate
+@Slf4j
 public class Developer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @ApiModelProperty(hidden = true)
     private Integer id;
+
     @NotNull
     private String firstname;
+
     private String lastname;
 
     @Column(unique = true)
@@ -43,9 +47,7 @@ public class Developer {
     private Date dateJoined;
 
     @Column(updatable = false, unique = true)
-    @NotNull(message = "{NotNull.email}")
-    @Size(min=10, max=50)
-    private String email;
+    private String username;
 
     private String password;
 
@@ -56,7 +58,7 @@ public class Developer {
 
     @ApiModelProperty(hidden = true)
     @ToString.Exclude
-    private String token;
+    private String authId;
 
     @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn()
@@ -71,10 +73,20 @@ public class Developer {
         this.firstname = developer.getFirstname();
         this.lastname = developer.getLastname();
         this.phoneNumber = developer.getPhoneNumber();
-        this.email = developer.getEmail();
+        this.username = developer.getUsername();
         this.applicationUser = developer.getApplicationUser();
         this.password = developer.getPassword();
 
+    }
+
+    public Developer(@NotNull GithubDeveloperDao githubDeveloperDao){
+        this.firstname = githubDeveloperDao.getUserFirstname();
+        this.lastname = githubDeveloperDao.getUserLastname();
+        this.phoneNumber = githubDeveloperDao.getPhoneNUmber();
+        this.imageUrl = githubDeveloperDao.getAvatar_url();
+        this.password = githubDeveloperDao.getPassword();
+        this.authId = githubDeveloperDao.getAuthId();
+        this.username = githubDeveloperDao.getLogin();
     }
 
 

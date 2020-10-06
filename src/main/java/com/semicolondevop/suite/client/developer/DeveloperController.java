@@ -8,6 +8,7 @@ package com.semicolondevop.suite.client.developer;
 
 import com.semicolondevop.suite.client.event.OnRegistrationCompleteEvent;
 import com.semicolondevop.suite.client.exception.UserAlreadyExistException;
+import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
 import com.semicolondevop.suite.service.cloudinary.CloudinaryService;
 import com.semicolondevop.suite.service.json.JsonObject;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -94,7 +95,7 @@ public class DeveloperController {
             @io.swagger.annotations.ApiResponse(code = 200, message = "Success", response = Developer.class),
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request", response = ResponseEntity.class)
     })
-    public ResponseEntity<?> registerSaver(@RequestBody Developer developer,
+    public ResponseEntity<?> registerSaver(@RequestBody GithubDeveloperDao githubDeveloperDao,
                                            @ApiParam(hidden = true) HttpServletRequest request,
                                            @ApiParam(hidden = true) @RequestHeader Map<String, String> headers)
             throws UserAlreadyExistException, URISyntaxException {
@@ -107,9 +108,6 @@ public class DeveloperController {
                         "and all headers: {}", saver,
                 request.getHeader("referer"));
 
-        String baseUrl = headers.containsKey("origin") ? String.format("%s", headers.get("origin")) :
-                String.format(" %s://%s", request.getScheme(), headers.get("host"));
-
         log.info("Is Origin positive or not:->{}", headers.get("origin"));
 
         EntityModel<Developer> entityModel = null;
@@ -117,15 +115,13 @@ public class DeveloperController {
         try {
 
 
-            saver = developerServiceImpl.registerAccount(saver);
+            saver = developerServiceImpl.registerAccount(githubDeveloperDao);
 
             log.info("SUCCESSFULLY SAVED USER --> {}", saver);
 
             entityModel =
                     assembler.toModel(saver);
             log.info("PUBLISHING EMAIL EVENT  FOR SAVER --> {}", saver);
-            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(developer,
-                    request.getLocale(), baseUrl));
 
         } catch (Exception uaeEx) {
             throw uaeEx;
@@ -140,7 +136,7 @@ public class DeveloperController {
      *
      */
     @GetMapping("/all")
-    @ApiOperation(value = "Find all Savers", notes = "You can retrieve all savers")
+    @ApiOperation(value = "Find all Developers", notes = "You can retrieve all Developers")
     @ApiResponses({
             @io.swagger.annotations.ApiResponse(code = 200, message = "Success", response = CollectionModel.class),
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request", response = ResponseEntity.class)
@@ -158,7 +154,7 @@ public class DeveloperController {
 
 
     @GetMapping("/")
-    @ApiOperation(value = "Find a Saver", notes = "You can retrieve a saver")
+    @ApiOperation(value = "Find a Developer", notes = "You can retrieve a Developer")
     @ApiResponses({
             @io.swagger.annotations.ApiResponse(code = 200, message = "Success", response = EntityModel.class),
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request", response = ResponseEntity.class)
