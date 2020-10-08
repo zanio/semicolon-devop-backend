@@ -2,13 +2,12 @@ package com.semicolondevop.suite.client.developer;
 
 
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
-import com.semicolondevop.suite.model.developer.Developer;
-import com.semicolondevop.suite.model.developer.DeveloperLoginDto;
-import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
+import com.semicolondevop.suite.model.developer.*;
 import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.repository.user.UserRepository;
 import com.semicolondevop.suite.service.developer.DeveloperService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +22,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -106,7 +110,7 @@ public class DeveloperTest {
             log.error("The cause of the error is {}", e.getCause().getLocalizedMessage());
             throw new Exception(e.getCause());
         }
-       ;
+
         log.info("The avartar url is {}", Objects.requireNonNull(response.getBody()).getAvatar_url() );
 
 
@@ -114,25 +118,6 @@ public class DeveloperTest {
         assertThat(response.getBody().getAvatar_url()).isEqualTo("https://avatars1.githubusercontent.com/u/38135488?v=4");
     }
 
-    @Test
-    public void testGetUserById() {
-//  Using Webflux method
-        WebClient client3 = WebClient
-                .builder()
-                .baseUrl(getGithubRootUrl())
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader("Pizzly-Auth-Id", authId)
-                .build();
-        Flux<GithubDeveloperDao> githubDeveloperDaoFlux =  client3.get()
-                .uri("/user")
-                .retrieve()
-                .bodyToFlux(GithubDeveloperDao.class);
-
-        Objects.requireNonNull(Objects.requireNonNull(githubDeveloperDaoFlux.buffer()).blockFirst()).forEach(e->{
-            log.info("the repos,{}",e.getName());
-        });
-
-    }
 
     @Test
     public void it_should_login_user_to_the_application(){
@@ -148,6 +133,89 @@ public class DeveloperTest {
                 HttpMethod.GET, entity, String.class);
     }
 
+    @Test
+    public void it_should_create_repo_from_a_template(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        headers.add("Pizzly-Auth-Id", authId);
+        String name = "name";
+        HttpEntity<String> entity = new HttpEntity<String>(name, headers);
 
+        ResponseEntity<String> response = null;
+        response = restTemplate.exchange(getGithubRootUrl() + "repos/zanio/semicolon-devop-backend/generate",
+                HttpMethod.POST, entity, String.class);
+
+        log.info("The response was successfully retrieved {}",response);
+
+
+
+    }
+
+    @Test
+    void it_should_push_to_github() throws Exception {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("myfile.txt").getFile());
+        if(file.exists()){
+//            String t = encryptFile(file);
+//            log.info("The file exist {} and it is encrypted",t);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            headers.add("Pizzly-Auth-Id", authId);
+            HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+
+
+            ResponseEntity<PushToGithubResponse> response = null;
+           String link= "repos/zanio/semicolon-devop-backend/contents/.travis.yml";
+
+            try {
+                response = restTemplate.exchange(getGithubRootUrl() + link+"?ref=master",
+                        HttpMethod.GET, entity, PushToGithubResponse.class);
+                if(!Objects.requireNonNull(response.getBody()).getContent().equals(decoder(encoder(file))+"\n")){
+                    PushToGithubResponse githubDeveloperDao = response.getBody();
+                    PushToGithubDao pushToGithubDao = new PushToGithubDao(encoder(file),
+                            "master","update");
+                    HttpHeaders headers1 = new HttpHeaders();
+                    headers1.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                    headers1.add("Pizzly-Auth-Id", authId);
+                    HttpEntity<PushToGithubDao> entityPost = new HttpEntity<>(pushToGithubDao, headers1);
+                    String link1= "repos/zanio/semicolon-devop-backend/contents/config/myfilexb.txt";
+
+                ResponseEntity<String>    response2 = restTemplate.exchange(getGithubRootUrl() + link1,
+                            HttpMethod.PUT, entityPost, String.class);
+//                    log.info("THE UNDECODED FILE IS: {}",githubDeveloperDao.getContent());
+                    log.info("File successfully push to github : {}",response2.getBody() );
+                } else{
+                    log.info("Nothing to update On github, {}");
+                }
+            } catch (Exception e){
+                log.error("The cause of the error is {}", e.getCause().getLocalizedMessage());
+                throw new Exception(e.getCause());
+            }
+
+        }
+
+    }
+
+    public  String encoder(File file) {
+        String base64File = "";
+        try (FileInputStream imageInFile = new FileInputStream(file)) {
+            // Reading a file from file system
+            byte fileData[] = new byte[(int) file.length()];
+            imageInFile.read(fileData);
+            base64File = Base64.encodeBase64String(fileData);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found" + e);
+        } catch (IOException ioe) {
+            System.out.println("Exception while reading the file " + ioe);
+        }
+
+        return base64File;
+    }
+
+    public  String decoder(String string) throws IOException {
+        byte[] decodedArrayByte = Base64.decodeBase64(string);
+        return new String(decodedArrayByte);
+
+    }
 
 }
