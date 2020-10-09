@@ -8,6 +8,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -45,12 +46,13 @@ public class GithubRestTemplate<T, R> {
      * @return ResponseEntity of Type T
      * @throws Exception
      */
-    public ResponseEntity<T> getService(String context, String query) throws Exception {
+    public ResponseEntity<T> getService(@NotNull String context, String query) throws Exception {
         HttpEntity<R> entity = new HttpEntity<>(null, headers);
         ResponseEntity<T> response = null;
         try {
             String queryConcate = "?"+query;
-            log.info("THE TYPE OF CLASS {} and the complete path {}",tType,context+queryConcate);
+            String buildContext = query != null?context+queryConcate:context;
+            log.info("THE TYPE OF CLASS {} and the complete path {}",tType,buildContext);
             log.info("the entity {} {}",entity,getGithubRootUrl());
             response = restTemplate.exchange(getGithubRootUrl() + context + queryConcate,
                     HttpMethod.GET, entity, tType);
@@ -100,9 +102,33 @@ public class GithubRestTemplate<T, R> {
         try {
             response = restTemplate.exchange(getGithubRootUrl() + context,
                     HttpMethod.PUT, entity, tType);
+            log.info("Response from putService {}",response.getBody());
 
         } catch (Exception e){
             log.error("THE ERROR OCCURRED DURING PUT AND THE CAUSE OF THE ERROR IS: {}", e.getCause().getLocalizedMessage());
+            throw new Exception(e.getCause());
+        }
+
+        return response;
+    }
+
+    /**
+     *
+     * @param context IT should Perform method Post
+     * @param r
+     * @return
+     * @throws Exception
+     */
+    public ResponseEntity<T> patchService(String context,R r) throws Exception {
+        HttpEntity<R> entity = new HttpEntity<>(r, headers);
+        ResponseEntity<T> response = null;
+        try {
+            response = restTemplate.exchange(getGithubRootUrl() + context,
+                    HttpMethod.PATCH, entity, tType);
+            log.info("RESPONSE PATCH  {}",response.getBody());
+
+        } catch (Exception e){
+            log.error("THE ERROR OCCURRED DURING PATCH AND THE CAUSE OF THE ERROR IS: {}", e.getCause().getLocalizedMessage());
             throw new Exception(e.getCause());
         }
 

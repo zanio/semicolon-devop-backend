@@ -1,10 +1,12 @@
-package com.semicolondevop.suite.model.repository;
+package com.semicolondevop.suite.model.repository.dao.post;
 
 import lombok.*;
 
+import java.util.Date;
+
 /**
  * @author with Username zanio and fullname Aniefiok Akpan
- * @created 08/10/2020 - 7:10 PM
+ * @created 08/10/2020 - 7:20 PM
  * @project com.semicolondevop.suite.model.repository in ds-suite
  */
 
@@ -13,10 +15,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Content {
-    private String html_url;
-    private String url;
+public class Author {
     private String name;
-    private String path;
-    private Commit commit;
+    private Date date;
 }

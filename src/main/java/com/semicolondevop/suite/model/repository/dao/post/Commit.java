@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.model.repository;
+package com.semicolondevop.suite.model.repository.dao.post;
 
 import lombok.*;
 
