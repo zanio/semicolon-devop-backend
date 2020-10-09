@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.model.repository;
+package com.semicolondevop.suite.model.repository.dao.post;
 
 import lombok.*;
 
@@ -15,4 +15,6 @@ import lombok.*;
 @ToString
 public class RepoResponsePush {
     private Content content;
+    private Commit commit;
+
 }

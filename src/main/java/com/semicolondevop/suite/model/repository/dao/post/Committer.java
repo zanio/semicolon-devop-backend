@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.model.repository;
+package com.semicolondevop.suite.model.repository.dao.post;
 
 import lombok.*;
 
@@ -14,6 +14,7 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Committer {
     private String name;
     private String email;
