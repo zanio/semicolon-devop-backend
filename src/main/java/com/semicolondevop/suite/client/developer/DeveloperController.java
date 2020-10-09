@@ -44,9 +44,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/api/savers")
+@RequestMapping("/api/developers")
 @Slf4j
-@Api(value = "/api/savers", tags = "Saver Services")
+@Api(value = "/api/developers", tags = "Developer Services")
 public class DeveloperController {
 
     @Autowired

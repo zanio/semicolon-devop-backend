@@ -9,9 +9,13 @@ package com.semicolondevop.suite.security;
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
+import com.semicolondevop.suite.model.developer.Developer;
+import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.service.json.JsonObject;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -41,9 +45,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final JsonObject jsonObjectImpl = new JsonObject();
 
+    private DeveloperRepository developerRepositoryImpl;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, ApplicationContext applicationContext) {
             this.authenticationManager = authenticationManager;
+            this.developerRepositoryImpl = applicationContext.getBean(DeveloperRepository.class);
     }
 
     // Authenticate the user when he login against the value stored in the database
@@ -89,8 +96,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("user details ---> {}",authResult.getDetails());
 
         response.setHeader("Content-type: application/json","Accept: application/json");
+       String user = ((User) authResult.getPrincipal()).getUsername();
+      Developer developer = developerRepositoryImpl.findByEmail(user);
 
         Map<String,Object> responseObject = new HashMap<>();
+        if(developer != null){
+            responseObject.put("authId",developer.getAuthId());
+        }
         responseObject.put("status",response.getStatus());
         responseObject.put("role",authResult.getAuthorities());
         responseObject.put("email",((User) authResult.getPrincipal()).getUsername());

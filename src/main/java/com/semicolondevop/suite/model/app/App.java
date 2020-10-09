@@ -35,6 +35,14 @@ public class App {
     @Size(max = 255)
     private String title;
 
+    @NotNull
+    @Size(max = 3000)
+    private String description;
+
+    @NotNull
+    @Size(max = 128)
+    private String name;
+
     @ManyToOne
     private Developer developer;
 

@@ -54,7 +54,7 @@ public class SpringFoxConfig  extends WebSecurityConfigurerAdapter {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .ignoredParameterTypes(AuthenticationPrincipal.class).select()
-                .apis(RequestHandlerSelectors.basePackage("com.alaajo.projectalaajo.client"))
+                .apis(RequestHandlerSelectors.basePackage("com.semicolondevop.suite.client"))
                 .paths(PathSelectors.any()).build()
 
                 .securitySchemes(newArrayList(apiKey()))
@@ -106,8 +106,8 @@ public class SpringFoxConfig  extends WebSecurityConfigurerAdapter {
         return or(
                 regex("/api/admin.*"),
                 regex("/api/investment.*"),
-                regex("/api/savers/all"),
-                regex("/api/savers.*")
+                regex("/api/developers/all"),
+                regex("/api/developers.*")
         );
     }
 
