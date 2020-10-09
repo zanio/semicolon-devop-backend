@@ -1,9 +1,11 @@
 package com.semicolondevop.suite.util;
 
 import com.semicolondevop.suite.model.developer.PushToGithubDao;
+import com.semicolondevop.suite.model.developer.PushToGithubResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.ParameterizedType;
@@ -18,21 +20,21 @@ import java.lang.reflect.Type;
 @Slf4j
 public class GithubRestTemplate<T, R> {
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
 
-    private Class<T> tType;
-
-
-    @Value("${url.github}")
-    private String githubUrl;
+    private final Class<T> tType;
 
     HttpHeaders headers = new HttpHeaders();
 
-    public GithubRestTemplate(String authId) {
+    /**
+     *
+     * @param authId Github authorization token
+     */
+    public GithubRestTemplate(String authId, Class<T> tType) {
         headers.add("Pizzly-Auth-Id", authId);
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        this.tType = (Class<T>) getGenericClassType(0);
-
+        this.tType = tType;
+        log.info("THE CLASS RESTEMPLATE {}",restTemplate);
 
     }
 
@@ -44,11 +46,15 @@ public class GithubRestTemplate<T, R> {
      * @throws Exception
      */
     public ResponseEntity<T> getService(String context, String query) throws Exception {
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        HttpEntity<R> entity = new HttpEntity<>(null, headers);
         ResponseEntity<T> response = null;
         try {
-            response = restTemplate.exchange(getGithubRootUrl() + context+"?"+query,
+            String queryConcate = "?"+query;
+            log.info("THE TYPE OF CLASS {} and the complete path {}",tType,context+queryConcate);
+            log.info("the entity {} {}",entity,getGithubRootUrl());
+            response = restTemplate.exchange(getGithubRootUrl() + context + queryConcate,
                     HttpMethod.GET, entity, tType);
+            log.info("THE RESPONSE IS AS FOLLOW");
 
         } catch (Exception e){
             log.error("THE ERROR OCCURRED DURING GET AND THE CAUSE OF THE ERROR IS: {}", e.getCause().getLocalizedMessage());
@@ -103,27 +109,10 @@ public class GithubRestTemplate<T, R> {
         return response;
     }
 
-    /**
-     * Returns a {@link Type} object to identify generic types
-     * @return type
-     */
-    private Type getGenericClassType(int index) {
-        // To make it use generics without supplying the class type
-        Type type = getClass().getGenericSuperclass();
 
-        while (!(type instanceof ParameterizedType)) {
-            if (type instanceof ParameterizedType) {
-                type = ((Class<?>) ((ParameterizedType) type).getRawType()).getGenericSuperclass();
-            } else {
-                type = ((Class<?>) type).getGenericSuperclass();
-            }
-        }
-
-        return ((ParameterizedType) type).getActualTypeArguments()[index];
-    }
 
     private String getGithubRootUrl(){
-        return githubUrl;
+        return "https://semicolon-dev-oauth2.herokuapp.com/proxy/github/";
     }
 
 

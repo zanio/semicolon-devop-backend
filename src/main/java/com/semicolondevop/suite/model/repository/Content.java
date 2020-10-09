@@ -1,9 +1,6 @@
 package com.semicolondevop.suite.model.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author with Username zanio and fullname Aniefiok Akpan
@@ -15,8 +12,9 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Content {
-    private String htmlUrl;
+    private String html_url;
     private String url;
     private String name;
     private String path;

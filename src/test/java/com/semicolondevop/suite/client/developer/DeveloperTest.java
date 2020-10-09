@@ -3,9 +3,11 @@ package com.semicolondevop.suite.client.developer;
 
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
 import com.semicolondevop.suite.model.developer.*;
+import com.semicolondevop.suite.model.repository.RepoResponsePush;
 import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.repository.user.UserRepository;
 import com.semicolondevop.suite.service.developer.DeveloperService;
+import com.semicolondevop.suite.util.GithubService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeAll;
@@ -154,7 +156,7 @@ public class DeveloperTest {
     @Test
     void it_should_push_to_github() throws Exception {
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("myfile.txt").getFile());
+        File file = new File(classLoader.getResource(".travis.yml").getFile());
         if(file.exists()){
 //            String t = encryptFile(file);
 //            log.info("The file exist {} and it is encrypted",t);
@@ -170,17 +172,18 @@ public class DeveloperTest {
             try {
                 response = restTemplate.exchange(getGithubRootUrl() + link+"?ref=master",
                         HttpMethod.GET, entity, PushToGithubResponse.class);
-                if(!Objects.requireNonNull(response.getBody()).getContent().equals(decoder(encoder(file))+"\n")){
+                String x1d = decoder(response.getBody().getContent());
+                String x2d = decoder(encoder(file));
+
+                if(!x1d.equals(x2d)){
                     PushToGithubResponse githubDeveloperDao = response.getBody();
                     PushToGithubDao pushToGithubDao = new PushToGithubDao(encoder(file),
                             "master","update");
-                    HttpHeaders headers1 = new HttpHeaders();
-                    headers1.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-                    headers1.add("Pizzly-Auth-Id", authId);
-                    HttpEntity<PushToGithubDao> entityPost = new HttpEntity<>(pushToGithubDao, headers1);
-                    String link1= "repos/zanio/semicolon-devop-backend/contents/config/myfilexb.txt";
 
-                ResponseEntity<String>    response2 = restTemplate.exchange(getGithubRootUrl() + link1,
+                    HttpEntity<PushToGithubDao> entityPost = new HttpEntity<>(pushToGithubDao, headers);
+                    String link1= "repos/zanio/semicolon-devop-backend/contents/config/myfile.txt";
+
+                ResponseEntity<String>    response2 = restTemplate.exchange(getGithubRootUrl() + link,
                             HttpMethod.PUT, entityPost, String.class);
 //                    log.info("THE UNDECODED FILE IS: {}",githubDeveloperDao.getContent());
                     log.info("File successfully push to github : {}",response2.getBody() );
@@ -216,6 +219,15 @@ public class DeveloperTest {
         byte[] decodedArrayByte = Base64.decodeBase64(string);
         return new String(decodedArrayByte);
 
+    }
+
+    @Test
+    void pushtogithub() throws IOException {
+        GithubService githubService = new GithubService();
+        RepoResponsePush repoResponsePush = githubService
+            .pushToGithub(".travis.yml","zanio/semicolon-devop-backend",".travis.yml",authId);
+
+        log.info("The file is {}",repoResponsePush);
     }
 
 }
