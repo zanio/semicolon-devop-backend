@@ -61,12 +61,8 @@ public class SpringFoxConfig  extends WebSecurityConfigurerAdapter {
                 .securityContexts(newArrayList(securityContext()))
                 .apiInfo(getApiInfo())
                 .tags(new Tag("Admin Services","All Api related to admin services"),
-                        new Tag("Investment Services","All Api related to investment services"),
                         new Tag("Password Services","All Api related to Password services"),
-                        new Tag("Admin Statistics Services","All Api related to Admin Statistics services"),
-                        new Tag("Developer Services","All Api related to Developer services"),
-                        new Tag("User Investment Services","All Api related to User Investment services")
-                        );
+                        new Tag("Developer Services","All Api related to Developer services"));
 
     }
 

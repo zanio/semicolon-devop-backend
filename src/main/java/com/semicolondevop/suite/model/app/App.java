@@ -6,6 +6,9 @@ package com.semicolondevop.suite.model.app;
 
 import com.semicolondevop.suite.model.developer.Developer;
 import com.semicolondevop.suite.model.env.Env;
+import com.semicolondevop.suite.model.logger.AppLogger;
+import com.semicolondevop.suite.model.repository.Repository;
+import com.semicolondevop.suite.model.techStack.TechStack;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,8 +46,18 @@ public class App {
     @Size(max = 128)
     private String name;
 
+    @OneToOne
+    private TechStack techStack;
+
+    @OneToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<AppLogger> appLoggers;
+
+
     @ManyToOne
     private Developer developer;
+
+    @OneToOne
+    private Repository repository;
 
     @OneToMany
     private Set<Env> envSet;
@@ -59,6 +72,21 @@ public class App {
             envSet = new HashSet<>();
         }
         envSet.add(env);
+    }
+
+    public boolean removeEnv(Env env){
+        boolean isremoved = false;
+        if (envSet.size()>0) {
+            isremoved = envSet.remove(env);
+        }
+      return isremoved;
+    }
+
+    public void addAppLogger(AppLogger appLogger){
+        if(appLoggers == null){
+            appLoggers = new HashSet<>();
+        }
+        appLoggers.add(appLogger);
     }
 
 }
