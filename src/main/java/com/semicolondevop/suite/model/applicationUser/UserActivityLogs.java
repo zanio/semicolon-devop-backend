@@ -7,6 +7,7 @@ package com.semicolondevop.suite.model.applicationUser;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -27,5 +28,6 @@ public class UserActivityLogs {
     @CreationTimestamp
     private Date lastLogin;
 
-
+    @UpdateTimestamp
+    private Date transactionUpdate;
 }

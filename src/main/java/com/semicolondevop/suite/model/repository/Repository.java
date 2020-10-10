@@ -1,5 +1,6 @@
 package com.semicolondevop.suite.model.repository;
 
+import com.semicolondevop.suite.model.app.App;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,10 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -38,6 +36,11 @@ public class Repository {
 
     @CreationTimestamp
     private Date dateCreated;
+
+    @OneToOne(cascade = {CascadeType.MERGE})
+    @JoinColumn()
+    @ApiModelProperty(hidden = true)
+    private App app;
 
 
 }
