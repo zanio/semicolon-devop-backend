@@ -66,7 +66,7 @@ public class DeveloperServiceImpl implements DeveloperService {
         if (emailExists(githubDeveloperDao.getLogin())) {
 
             log.error("USER EMAIL ACCOUNT ALREADY EXISTS <--> THROWING EXCEPTION");
-            throw new UserAlreadyExistException("There is an account with that email address: " + githubDeveloperDao.getLogin());
+            throw new UserAlreadyExistException("There is an account with that user name already: " + githubDeveloperDao.getLogin());
         }
         else {
 
