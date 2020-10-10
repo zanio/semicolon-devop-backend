@@ -3,6 +3,8 @@ package com.semicolondevop.suite.client.developer;
 
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
 import com.semicolondevop.suite.model.developer.*;
+import com.semicolondevop.suite.model.repository.dao.get.GithubRepoResponseDao;
+import com.semicolondevop.suite.model.repository.dao.get.ListOfRepository;
 import com.semicolondevop.suite.model.repository.dao.post.RepoResponsePush;
 import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.repository.user.UserRepository;
@@ -20,6 +22,7 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -138,6 +141,37 @@ public class DeveloperTest {
         log.info("The response was successfully retrieved {}", response);
 
 
+    }
+
+    @Test
+    void it_should_list_all_repo_based_on_oauth_scope(){
+        GithubService githubService = new GithubService();
+        List<GithubRepoResponseDao>  listOfRepository = githubService.getGitUserRepositories(authId,"user/repos");
+        log.info("THE REPO LIST {}",listOfRepository);
+    }
+
+    @Test
+    void it_should_get_user(){
+        GithubService githubService = new GithubService();
+        GithubDeveloperDao  githubDeveloperDao = githubService.getGitUserProfile(authId,"user");
+        log.info("THE REPO LIST {}",githubDeveloperDao);
+    }
+
+
+    @Test
+    void it_should_query_repo_based_on_oauth_scope_without_admin_access(){
+        // todo Maduflavins/Authentications
+        GithubService githubService = new GithubService();
+        GithubRepoResponseDao  repository = githubService.getGitUserRepository(authId,"repos/Maduflavins/Authentications");
+        log.info("THE REPO LIST {}",repository);
+    }
+
+    @Test
+    void it_should_query_repo_based_on_oauth_scope_with_admin_access(){
+        // todo Maduflavins/Authentications
+        GithubService githubService = new GithubService();
+        GithubRepoResponseDao  repository = githubService.getGitUserRepository(authId,"repos/tboydv1/springAlaajoBackend");
+        log.info("THE REPO LIST {}",repository);
     }
 
     @Test

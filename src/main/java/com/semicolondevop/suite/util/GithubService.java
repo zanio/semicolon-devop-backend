@@ -1,5 +1,8 @@
 package com.semicolondevop.suite.util;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
 import com.semicolondevop.suite.model.developer.PushToGithubResponse;
 import com.semicolondevop.suite.model.repository.dao.get.GithubRepoResponseDao;
@@ -12,6 +15,10 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author with Username zanio and fullname Aniefiok Akpan
@@ -22,6 +29,14 @@ import java.io.IOException;
 @Slf4j
 public class GithubService {
 
+    /**
+     * @param pathToFileInResourceFolder
+     * @param repo
+     * @param pathToRemoteFile
+     * @param authId
+     * @return
+     * @throws IOException
+     */
     public RepoResponsePush pushToGithub(String pathToFileInResourceFolder, String repo, String pathToRemoteFile,
                                          String authId) throws IOException {
         String link = String.format("repos/%s/contents/%s", repo, pathToRemoteFile);
@@ -72,6 +87,12 @@ public class GithubService {
         return repoResponsePush;
     }
 
+    /**
+     * @param authId
+     * @param context
+     * @return
+     */
+
     public GithubDeveloperDao getGitUserProfile(String authId, String context) {
         GithubDeveloperDao githubDeveloperDao = null;
         try {
@@ -87,48 +108,82 @@ public class GithubService {
         return githubDeveloperDao;
     }
 
-    public ListOfRepository getGitUserRepositories(String authId, String context) {
-        ListOfRepository listOfRepository = null;
-        try {
-            GithubRestTemplate<ListOfRepository, GithubRepoResponseDao>
-                    githubRestTemplate
-                    = new GithubRestTemplate<>(authId, ListOfRepository.class);
+    /**
+     * @param authId
+     * @param context
+     * @return
+     */
 
-            listOfRepository = githubRestTemplate.getService(context, null).getBody();
+    public List<GithubRepoResponseDao> getGitUserRepositories(String authId, String context) {
+        List<GithubRepoResponseDao> responseDaoList = new ArrayList<>();
+        try {
+            GithubRestTemplate<GithubRepoResponseDao[], String>
+                    githubRestTemplate
+                    = new GithubRestTemplate<>(authId, GithubRepoResponseDao[].class);
+
+            GithubRepoResponseDao[] githubRepoResponseDaos = githubRestTemplate.getService(context, null).getBody();
+            if (githubRepoResponseDaos != null && githubRepoResponseDaos.length > 0) {
+                responseDaoList = Arrays.asList(Objects.requireNonNull(githubRestTemplate.getService(context, null).getBody()));
+
+            }
+
+
         } catch (Exception e) {
             log.error("ERROR OCCURRED IN THE getGitUserRepository {}", e.getCause().getLocalizedMessage());
         }
-        return listOfRepository;
+        return responseDaoList;
     }
 
-    public GithubRepoResponseDao getGitUserRepository(String authId, String context, String query) {
+    /**
+     * @param authId
+     * @param context
+     * @return
+     */
+
+    public GithubRepoResponseDao getGitUserRepository(String authId, String context) {
         GithubRepoResponseDao githubRepoResponseDao = null;
         try {
             GithubRestTemplate<GithubRepoResponseDao, GithubRepoResponseDao>
                     githubRestTemplate
                     = new GithubRestTemplate<>(authId, GithubRepoResponseDao.class);
 
-            githubRepoResponseDao = githubRestTemplate.getService(context, query).getBody();
+            githubRepoResponseDao = githubRestTemplate.getService(context, null).getBody();
         } catch (Exception e) {
             log.error("ERROR OCCURRED IN THE getGitUserRepository {}", e.getCause().getLocalizedMessage());
         }
         return githubRepoResponseDao;
     }
 
-    public GithubRepoResponseDao getGitUserRepositoryByFullName(String authId, String context, String repo_full_name) {
-        GithubRepoResponseDao githubRepoResponseDao = null;
+    /**
+     * @param authId
+     * @param context
+     * @param repo_full_name
+     * @return
+     */
+
+    public List<GithubRepoResponseDao> getGitUserRepositoryAndSortByFullName(String authId, String context, String repo_full_name) {
+        List<GithubRepoResponseDao> responseDaoList = new ArrayList<>();
         try {
-            GithubRestTemplate<GithubRepoResponseDao, GithubRepoResponseDao>
+            GithubRestTemplate<GithubRepoResponseDao[], GithubRepoResponseDao>
                     githubRestTemplate
-                    = new GithubRestTemplate<>(authId, GithubRepoResponseDao.class);
+                    = new GithubRestTemplate<>(authId, GithubRepoResponseDao[].class);
             String query = "full_name=" + repo_full_name;
-            githubRepoResponseDao = githubRestTemplate.getService(context, query).getBody();
+            GithubRepoResponseDao[] githubRepoResponseDaos = githubRestTemplate.getService(context, null).getBody();
+            if (githubRepoResponseDaos != null && githubRepoResponseDaos.length > 0) {
+                responseDaoList = Arrays.asList(Objects.requireNonNull(githubRestTemplate.getService(context, query).getBody()));
+
+            }
         } catch (Exception e) {
             log.error("ERROR OCCURRED IN THE getGitUserRepository {}", e.getCause().getLocalizedMessage());
         }
-        return githubRepoResponseDao;
+        return responseDaoList;
     }
 
+    /**
+     * @param authId
+     * @param context
+     * @return
+     */
     public GithubRepoResponseDao updateGithubDefaultBranch(String authId, String context) {
         GithubRepoResponseDao githubRepoResponseDao = null;
         try {

@@ -1,6 +1,11 @@
 package com.semicolondevop.suite.model.repository.dao.get;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import lombok.*;
+
+import java.util.List;
 
 /**
  * @author with Username zanio and fullname Aniefiok Akpan
@@ -25,5 +30,7 @@ public class GithubRepoResponseDao {
     private String events_url;
     private String default_branch;
     private Owner owner;
+
+
 
 }
