@@ -3,6 +3,8 @@ package com.semicolondevop.suite.client.developer;
 
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
 import com.semicolondevop.suite.model.developer.*;
+import com.semicolondevop.suite.model.repository.dao.get.GithubRepoResponseDao;
+import com.semicolondevop.suite.model.repository.dao.get.ListOfRepository;
 import com.semicolondevop.suite.model.repository.dao.post.RepoResponsePush;
 import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.repository.user.UserRepository;
@@ -20,6 +22,7 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,56 +75,56 @@ public class DeveloperTest {
         assertThat(getGithubRootUrl()).isNotNull();
     }
 
-    @Test
-    public void after_user_authenticate_With_github_then_getUserProfile_and_save_to_db() throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        headers.add("Pizzly-Auth-Id", authId);
-        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+//    @Test
+//    public void after_user_authenticate_With_github_then_getUserProfile_and_save_to_db() throws Exception {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+//        headers.add("Pizzly-Auth-Id", authId);
+//        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+//
+//        ResponseEntity<GithubDeveloperDao> response = null;
+//
+//        try {
+//            response = restTemplate.exchange(getGithubRootUrl() + "user",
+//                    HttpMethod.GET, entity, GithubDeveloperDao.class);
+//            if (Objects.requireNonNull(response.getBody()).getLogin() != null) {
+//                GithubDeveloperDao githubDeveloperDao = response.getBody();
+//                githubDeveloperDao.setPassword(passwordEncoder.encode("MasterCraft"));
+//                githubDeveloperDao.setPhoneNUmber("08167124344");
+//                githubDeveloperDao.setAuthId(authId);
+//                ApplicationUser applicationUser = new ApplicationUser(githubDeveloperDao);
+//                userRepositoryImpl.save(applicationUser);
+//                Developer developer = new Developer(githubDeveloperDao);
+//                developer.setApplicationUser(applicationUser);
+//                Developer developer1 = developerRepositoryImpl.save(developer);
+//                log.info("THE USER HAS BEEN SAVED IN THE DB: {}", developer1);
+//            }
+//        } catch (Exception e) {
+//            log.error("The cause of the error is {}", e.getCause().getLocalizedMessage());
+//            throw new Exception(e.getCause());
+//        }
+//
+//        log.info("The avartar url is {}", Objects.requireNonNull(response.getBody()).getAvatar_url());
+//
+//
+//        assertThat(response.getBody()).isNotNull();
+//        assertThat(response.getBody().getAvatar_url()).isEqualTo("https://avatars1.githubusercontent.com/u/38135488?v=4");
+//    }
 
-        ResponseEntity<GithubDeveloperDao> response = null;
 
-        try {
-            response = restTemplate.exchange(getGithubRootUrl() + "user",
-                    HttpMethod.GET, entity, GithubDeveloperDao.class);
-            if (Objects.requireNonNull(response.getBody()).getLogin() != null) {
-                GithubDeveloperDao githubDeveloperDao = response.getBody();
-                githubDeveloperDao.setPassword(passwordEncoder.encode("MasterCraft"));
-                githubDeveloperDao.setPhoneNUmber("08167124344");
-                githubDeveloperDao.setAuthId(authId);
-                ApplicationUser applicationUser = new ApplicationUser(githubDeveloperDao);
-                userRepositoryImpl.save(applicationUser);
-                Developer developer = new Developer(githubDeveloperDao);
-                developer.setApplicationUser(applicationUser);
-                Developer developer1 = developerRepositoryImpl.save(developer);
-                log.info("THE USER HAS BEEN SAVED IN THE DB: {}", developer1);
-            }
-        } catch (Exception e) {
-            log.error("The cause of the error is {}", e.getCause().getLocalizedMessage());
-            throw new Exception(e.getCause());
-        }
-
-        log.info("The avartar url is {}", Objects.requireNonNull(response.getBody()).getAvatar_url());
-
-
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getAvatar_url()).isEqualTo("https://avatars1.githubusercontent.com/u/38135488?v=4");
-    }
-
-
-    @Test
-    public void it_should_login_user_to_the_application() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-
-        DeveloperLoginDto developerLoginDto = new DeveloperLoginDto("zanio", "MasterCraft");
-        HttpEntity<String> entity = new HttpEntity<String>(developerLoginDto.toString(), headers);
-        log.info("The method tostring {}", entity);
-
-        ResponseEntity<String> response = null;
-        response = restTemplate.exchange(getRootUrl() + "user",
-                HttpMethod.GET, entity, String.class);
-    }
+//    @Test
+//    public void it_should_login_user_to_the_application() {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+//
+//        DeveloperLoginDto developerLoginDto = new DeveloperLoginDto("zanio", "MasterCraft");
+//        HttpEntity<String> entity = new HttpEntity<String>(developerLoginDto.toString(), headers);
+//        log.info("The method tostring {}", entity);
+//
+//        ResponseEntity<String> response = null;
+//        response = restTemplate.exchange(getRootUrl() + "user",
+//                HttpMethod.GET, entity, String.class);
+//    }
 
     @Test
     public void it_should_create_repo_from_a_template() {
@@ -138,6 +141,37 @@ public class DeveloperTest {
         log.info("The response was successfully retrieved {}", response);
 
 
+    }
+
+    @Test
+    void it_should_list_all_repo_based_on_oauth_scope(){
+        GithubService githubService = new GithubService();
+        List<GithubRepoResponseDao>  listOfRepository = githubService.getGitUserRepositories(authId,"user/repos");
+        log.info("THE REPO LIST {}",listOfRepository);
+    }
+
+    @Test
+    void it_should_get_user(){
+        GithubService githubService = new GithubService();
+        GithubDeveloperDao  githubDeveloperDao = githubService.getGitUserProfile(authId,"user");
+        log.info("THE REPO LIST {}",githubDeveloperDao);
+    }
+
+
+    @Test
+    void it_should_query_repo_based_on_oauth_scope_without_admin_access(){
+        // todo Maduflavins/Authentications
+        GithubService githubService = new GithubService();
+        GithubRepoResponseDao  repository = githubService.getGitUserRepository(authId,"repos/Maduflavins/Authentications");
+        log.info("THE REPO LIST {}",repository);
+    }
+
+    @Test
+    void it_should_query_repo_based_on_oauth_scope_with_admin_access(){
+        // todo Maduflavins/Authentications
+        GithubService githubService = new GithubService();
+        GithubRepoResponseDao  repository = githubService.getGitUserRepository(authId,"repos/tboydv1/springAlaajoBackend");
+        log.info("THE REPO LIST {}",repository);
     }
 
     @Test

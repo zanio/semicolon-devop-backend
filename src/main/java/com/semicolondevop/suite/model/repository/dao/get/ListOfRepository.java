@@ -16,5 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class ListOfRepository {
+
   private   List<GithubRepoResponseDao> repoResponseDaoList;
 }

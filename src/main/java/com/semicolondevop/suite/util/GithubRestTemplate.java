@@ -53,7 +53,7 @@ public class GithubRestTemplate<T, R> {
             String queryConcate = "?"+query;
             String buildContext = query != null?context+queryConcate:context;
             log.info("THE TYPE OF CLASS {} and the complete path {}",tType,buildContext);
-            log.info("the entity {} {}",entity,getGithubRootUrl());
+            log.info("the entity {} {}",entity,getGithubRootUrl()+context+queryConcate);
             response = restTemplate.exchange(getGithubRootUrl() + context + queryConcate,
                     HttpMethod.GET, entity, tType);
             log.info("THE RESPONSE IS AS FOLLOW");
