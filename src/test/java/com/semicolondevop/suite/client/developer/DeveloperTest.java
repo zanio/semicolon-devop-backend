@@ -112,19 +112,22 @@ public class DeveloperTest {
 //    }
 
 
-//    @Test
-//    public void it_should_login_user_to_the_application() {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-//
-//        DeveloperLoginDto developerLoginDto = new DeveloperLoginDto("zanio", "MasterCraft");
-//        HttpEntity<String> entity = new HttpEntity<String>(developerLoginDto.toString(), headers);
-//        log.info("The method tostring {}", entity);
-//
-//        ResponseEntity<String> response = null;
-//        response = restTemplate.exchange(getRootUrl() + "user",
-//                HttpMethod.GET, entity, String.class);
-//    }
+    @Test
+    public void it_should_login_user_to_the_application() {
+        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Content-Type", "application/json");
+        headers.add("Accept", "application/json");
+
+        DeveloperLoginDto developerLoginDto = new DeveloperLoginDto("zanio", "MasterCraft");
+        HttpEntity<DeveloperLoginDto> entity = new HttpEntity<>(developerLoginDto, headers);
+        log.info("The method tostring {}", entity);
+
+        ResponseEntity<String> response = null;
+        response = restTemplate.exchange(getRootUrl() + "api/auth/login",
+                HttpMethod.POST, entity, String.class);
+
+        log.info("The return response is as follow {}",response);
+    }
 
     @Test
     public void it_should_create_repo_from_a_template() {

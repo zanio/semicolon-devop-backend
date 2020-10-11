@@ -7,6 +7,7 @@ package com.semicolondevop.suite.model.applicationUser;
  *
  */
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.semicolondevop.suite.model.admin.Admin;
 import com.semicolondevop.suite.model.developer.Developer;
 import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
@@ -51,6 +52,7 @@ public class ApplicationUser implements GrantedAuthority {
     private String role;
 
     @OneToOne(mappedBy = "applicationUser")
+    @JsonManagedReference
     private UserActivityLogs userActivityLogs;
 
 
