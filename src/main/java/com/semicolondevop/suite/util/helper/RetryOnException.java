@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.util;
+package com.semicolondevop.suite.util.helper;
 
 /**
  * @author Aniefiok on 8/5/2020

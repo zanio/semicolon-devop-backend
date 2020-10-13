@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.util;
+package com.semicolondevop.suite.util.helper;
 
 import org.openapitools.jackson.nullable.JsonNullable;
 

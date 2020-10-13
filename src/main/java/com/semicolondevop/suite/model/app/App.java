@@ -56,8 +56,6 @@ public class App {
     @ManyToOne
     private Developer developer;
 
-    @OneToOne
-    private Repository repository;
 
     @OneToMany
     private Set<Env> envSet;
@@ -65,6 +63,10 @@ public class App {
     public App(@NotNull App app) {
         this.domain = app.getDomain();
         this.title = app.getTitle();
+        this.description = app.getDescription();
+        this.name = app.getName();
+        this.techStack = app.getTechStack();
+
     }
 
     public void addEnv(Env env){

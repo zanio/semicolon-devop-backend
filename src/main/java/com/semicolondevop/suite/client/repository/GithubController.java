@@ -2,7 +2,7 @@ package com.semicolondevop.suite.client.repository;
 
 import com.semicolondevop.suite.client.genericresponse.ResponseApi;
 import com.semicolondevop.suite.model.repository.dao.get.GithubRepoResponseDao;
-import com.semicolondevop.suite.util.GithubService;
+import com.semicolondevop.suite.util.github.GithubService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

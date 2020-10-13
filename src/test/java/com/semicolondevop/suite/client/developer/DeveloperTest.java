@@ -1,14 +1,12 @@
 package com.semicolondevop.suite.client.developer;
 
 
-import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
 import com.semicolondevop.suite.model.developer.*;
 import com.semicolondevop.suite.model.repository.dao.get.GithubRepoResponseDao;
-import com.semicolondevop.suite.model.repository.dao.get.ListOfRepository;
 import com.semicolondevop.suite.model.repository.dao.post.RepoResponsePush;
 import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.repository.user.UserRepository;
-import com.semicolondevop.suite.util.GithubService;
+import com.semicolondevop.suite.util.github.GithubService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +24,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

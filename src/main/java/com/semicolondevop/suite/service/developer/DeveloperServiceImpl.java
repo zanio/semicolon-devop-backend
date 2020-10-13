@@ -15,21 +15,15 @@ import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
 import com.semicolondevop.suite.model.developer.Developer;
 import com.semicolondevop.suite.repository.user.UserRepository;
-import com.semicolondevop.suite.util.JsonNullableUtils;
+import com.semicolondevop.suite.util.helper.JsonNullableUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static java.lang.Double.sum;
 
 @Service("saver")
 @Slf4j

@@ -1,12 +1,8 @@
-package com.semicolondevop.suite.util;
+package com.semicolondevop.suite.util.github;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
 import com.semicolondevop.suite.model.developer.PushToGithubResponse;
 import com.semicolondevop.suite.model.repository.dao.get.GithubRepoResponseDao;
-import com.semicolondevop.suite.model.repository.dao.get.ListOfRepository;
 import com.semicolondevop.suite.model.repository.dao.patch.UpdateGithubRepo;
 import com.semicolondevop.suite.model.repository.dao.post.DataUpdateRepoPush;
 import com.semicolondevop.suite.model.repository.dao.post.RepoResponsePush;
