@@ -22,8 +22,12 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -166,7 +170,7 @@ public class DeveloperTest {
         // todo Maduflavins/Authentications
         GithubService githubService = new GithubService();
         GithubRepoResponseDao  repository = githubService.getGitUserRepository(authId,"repos/Maduflavins/Authentications");
-        log.info("THE REPO LIST {}",repository);
+        log.info("THE REPO DETAILS {}",repository);
     }
 
     @Test
@@ -174,7 +178,7 @@ public class DeveloperTest {
         // todo Maduflavins/Authentications
         GithubService githubService = new GithubService();
         GithubRepoResponseDao  repository = githubService.getGitUserRepository(authId,"repos/tboydv1/springAlaajoBackend");
-        log.info("THE REPO LIST {}",repository);
+        log.info("THE REPO DETAILS {}",repository);
     }
 
     @Test
@@ -200,5 +204,17 @@ public class DeveloperTest {
 
        }
     }
+
+    @Test
+    void it_should_get_the_date_difference_between_two_dates() throws ParseException {
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd MM yyyy");
+        String dateBeforeString = "31 01 2020";
+        String dateAfterString = "02 02 2020";
+        Date dateBefore = myFormat.parse(dateBeforeString);
+        Date dateAfter = myFormat.parse(dateAfterString);
+
+    }
+
+
 
 }

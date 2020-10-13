@@ -22,6 +22,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.DateFormatter;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service("userdetails")
@@ -62,12 +65,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             userActivityLogs = new UserActivityLogs();
             userActivityLogs.setApplicationUser(applicationUser);
             long today =  System.currentTimeMillis();
-            date = new Date(today);
+            Timestamp ts=new Timestamp(today);
+            Date date=new Date(ts.getTime());
             userActivityLogs.setLastLoginDate(date);
             userLogsRepository.save(userActivityLogs);
         } else {
             long today =  System.currentTimeMillis();
-            date = new Date(today);
+            Timestamp ts=new Timestamp(today);
+            Date date=new Date(ts.getTime());
             userActivityLogs.setLastLoginDate(date);
             userLogsRepository.save(userActivityLogs);
         }

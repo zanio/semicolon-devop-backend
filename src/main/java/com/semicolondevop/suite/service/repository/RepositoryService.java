@@ -1,5 +1,6 @@
 package com.semicolondevop.suite.service.repository;
 
+import com.semicolondevop.suite.model.app.App;
 import com.semicolondevop.suite.model.repository.Repository;
 
 /**
@@ -9,5 +10,5 @@ import com.semicolondevop.suite.model.repository.Repository;
  */
 
 public interface RepositoryService {
-    Repository add(String repo_full_name);
+    Repository add(Repository repository, App app) throws Exception;
 }

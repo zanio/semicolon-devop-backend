@@ -1,6 +1,9 @@
 package com.semicolondevop.suite.model.repository;
 
 import com.semicolondevop.suite.model.app.App;
+import com.semicolondevop.suite.model.techStack.TechStack;
+import com.semicolondevop.suite.model.techStack.TechStackType;
+import com.semicolondevop.suite.model.techStack.TypeOfApplication;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,12 +26,13 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Repository {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @ApiModelProperty(hidden = true)
     private Integer id;
 
-    private String nameOfRepo;
+    private String fullName;
 
     private String pathToConfigurationFile;
 
@@ -42,5 +46,25 @@ public class Repository {
     @ApiModelProperty(hidden = true)
     private App app;
 
+    public Repository(Repository repository, App app) {
+        this.fullName = repository.getFullName();
+        this.repoLink = repository.getRepoLink();
+        this.app = app;
 
+        if(app.getTechStack().getTypeOfApplication() == TypeOfApplication.DECOUPLED){
+            TechStackType techStackType = app.getTechStack().getTechStackType();
+            if(techStackType == TechStackType.JAVA){
+                this.pathToConfigurationFile = RepoLinkConstant.JAVA;
+            } else if(techStackType == TechStackType.NODE){
+                this.pathToConfigurationFile = RepoLinkConstant.NODE;
+            } else if(techStackType == TechStackType.PYTHON){
+                this.pathToConfigurationFile = RepoLinkConstant.PYTHON;
+            } else if(techStackType == TechStackType.VUE){
+                this.pathToConfigurationFile = RepoLinkConstant.VUE;
+            } else if(techStackType == TechStackType.REACT){
+                this.repoLink = RepoLinkConstant.REACT;
+            };
+
+        }
+    }
 }
