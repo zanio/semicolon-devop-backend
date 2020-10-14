@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class AppserviceImpl implements AppService {
+public class AppServiceImpl implements AppService {
 
 
     private final AppRepository appRepositoryImpl;
@@ -29,12 +29,18 @@ public class AppserviceImpl implements AppService {
 
 
     @Autowired
-    public AppserviceImpl(IAuthenticationFacade iAuthenticationFacadeImpl,DeveloperRepository developerRepositoryImpl,
-                                 AppRepository appRepositoryImpl) {
+    public AppServiceImpl(IAuthenticationFacade iAuthenticationFacadeImpl, DeveloperRepository developerRepositoryImpl,
+                          AppRepository appRepositoryImpl) {
         this.appRepositoryImpl = appRepositoryImpl;
         this.iAuthenticationFacadeImpl = iAuthenticationFacadeImpl;
         this.developerRepositoryImpl = developerRepositoryImpl;
     }
+
+    /**
+     *
+     * @param app dao to be saved in the database;
+     * @return app
+     */
     @Override
     public App add(App app) {
         String username = securityContextUser();

@@ -3,6 +3,7 @@ package com.semicolondevop.suite.util.interceptors;
 import com.semicolondevop.suite.model.activity.Activity;
 import com.semicolondevop.suite.model.developer.Developer;
 import com.semicolondevop.suite.service.activity.ActivityService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
  * @project com.semicolondevop.suite.util.interceptors in ds-suite
  */
 @Component
+@Slf4j
 public class ActivityInterceptor extends HandlerInterceptorAdapter {
 
 
@@ -46,7 +48,7 @@ public class ActivityInterceptor extends HandlerInterceptorAdapter {
         if (m.find()) {
             activity.setUserAgent(m.group(1));
         }
-
+        log.info("THis is the secuirty context holder {}",SecurityContextHolder.getContext().getAuthentication());
         if (SecurityContextHolder.getContext().getAuthentication() != null &&
                 SecurityContextHolder.getContext().getAuthentication().isAuthenticated() &&
                 //when Anonymous Authentication is enabled

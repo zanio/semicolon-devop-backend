@@ -49,15 +49,18 @@ public class App {
     @OneToOne
     private TechStack techStack;
 
+    @ApiModelProperty(hidden = true)
     @OneToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<AppLogger> appLoggers;
 
 
     @ManyToOne
+    @ApiModelProperty(hidden = true)
     private Developer developer;
 
 
     @OneToMany
+    @ApiModelProperty(hidden = true)
     private Set<Env> envSet;
 
     public App(@NotNull App app) {

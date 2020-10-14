@@ -4,10 +4,6 @@ import com.semicolondevop.suite.model.activity.Activity;
 import com.semicolondevop.suite.model.developer.Developer;
 import com.semicolondevop.suite.repository.activityRepository.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 
@@ -48,7 +44,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Activity findLast(Developer developer) {
-        return activityRepo.findFirstByUserOrderByIdDesc(developer);
+        return activityRepo.findFirstByDeveloperOrderByIdDesc(developer);
     }
 
 

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity,Long> {
     Activity findFirstBy();
-    Activity findFirstByUserOrderByIdDesc(Developer developer);
-    Page<Activity> findByUser(Developer developer, Pageable pageable);
+    Activity findFirstByDeveloperOrderByIdDesc(Developer developer);
+    Page<Activity> findByDeveloper(Developer developer, Pageable pageable);
 }
 
