@@ -8,6 +8,7 @@ import com.semicolondevop.suite.model.repository.dao.post.RepoResponsePush;
 import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.repository.user.UserRepository;
 import com.semicolondevop.suite.util.github.GithubService;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
