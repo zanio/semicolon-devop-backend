@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -212,6 +213,8 @@ public class DeveloperController {
                 .body(entityModel);
     }
 
+
+
     /**
      * @param request
      * @param token
@@ -246,11 +249,12 @@ public class DeveloperController {
 
         log.info("updating user details in the database");
         //update
-        developerServiceImpl.update(savedUser);
+        Developer developer = developerServiceImpl.update(savedUser);
 
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("user activated successfully");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(developer);
     }
 
 

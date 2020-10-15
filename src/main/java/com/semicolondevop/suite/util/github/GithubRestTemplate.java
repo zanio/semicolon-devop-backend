@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.util;
+package com.semicolondevop.suite.util.github;
 
 import com.semicolondevop.suite.model.developer.PushToGithubDao;
 import com.semicolondevop.suite.model.developer.PushToGithubResponse;

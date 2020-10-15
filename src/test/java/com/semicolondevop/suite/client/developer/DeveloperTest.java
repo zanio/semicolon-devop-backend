@@ -4,11 +4,11 @@ package com.semicolondevop.suite.client.developer;
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
 import com.semicolondevop.suite.model.developer.*;
 import com.semicolondevop.suite.model.repository.dao.get.GithubRepoResponseDao;
-import com.semicolondevop.suite.model.repository.dao.get.ListOfRepository;
 import com.semicolondevop.suite.model.repository.dao.post.RepoResponsePush;
 import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.repository.user.UserRepository;
-import com.semicolondevop.suite.util.GithubService;
+import com.semicolondevop.suite.util.github.GithubService;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,13 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
+@ActiveProfiles("test")
 public class DeveloperTest {
 
     @Autowired
@@ -75,55 +81,69 @@ public class DeveloperTest {
         assertThat(getGithubRootUrl()).isNotNull();
     }
 
-//    @Test
-//    public void after_user_authenticate_With_github_then_getUserProfile_and_save_to_db() throws Exception {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-//        headers.add("Pizzly-Auth-Id", authId);
-//        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-//
-//        ResponseEntity<GithubDeveloperDao> response = null;
-//
-//        try {
-//            response = restTemplate.exchange(getGithubRootUrl() + "user",
-//                    HttpMethod.GET, entity, GithubDeveloperDao.class);
-//            if (Objects.requireNonNull(response.getBody()).getLogin() != null) {
-//                GithubDeveloperDao githubDeveloperDao = response.getBody();
-//                githubDeveloperDao.setPassword(passwordEncoder.encode("MasterCraft"));
-//                githubDeveloperDao.setPhoneNUmber("08167124344");
-//                githubDeveloperDao.setAuthId(authId);
-//                ApplicationUser applicationUser = new ApplicationUser(githubDeveloperDao);
-//                userRepositoryImpl.save(applicationUser);
-//                Developer developer = new Developer(githubDeveloperDao);
-//                developer.setApplicationUser(applicationUser);
-//                Developer developer1 = developerRepositoryImpl.save(developer);
-//                log.info("THE USER HAS BEEN SAVED IN THE DB: {}", developer1);
-//            }
-//        } catch (Exception e) {
-//            log.error("The cause of the error is {}", e.getCause().getLocalizedMessage());
-//            throw new Exception(e.getCause());
-//        }
-//
-//        log.info("The avartar url is {}", Objects.requireNonNull(response.getBody()).getAvatar_url());
-//
-//
-//        assertThat(response.getBody()).isNotNull();
-//        assertThat(response.getBody().getAvatar_url()).isEqualTo("https://avatars1.githubusercontent.com/u/38135488?v=4");
-//    }
+    @Test
+    public void after_user_authenticate_With_github_then_getUserProfile_and_save_to_db() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        headers.add("Pizzly-Auth-Id", authId);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+
+        ResponseEntity<GithubDeveloperDao> response = null;
+
+       if (developerRepositoryImpl.findByEmail("zanio")==null){
+           try {
+               response = restTemplate.exchange(getGithubRootUrl() + "user",
+                       HttpMethod.GET, entity, GithubDeveloperDao.class);
+               if (Objects.requireNonNull(response.getBody()).getLogin() != null) {
+                   GithubDeveloperDao githubDeveloperDao = response.getBody();
+                   githubDeveloperDao.setPassword(passwordEncoder.encode("MasterCraft"));
+                   githubDeveloperDao.setPhoneNUmber("08167124344");
+                   githubDeveloperDao.setAuthId(authId);
+                   ApplicationUser applicationUser = new ApplicationUser(githubDeveloperDao);
+                   userRepositoryImpl.save(applicationUser);
+                   Developer developer = new Developer(githubDeveloperDao);
+                   developer.setApplicationUser(applicationUser);
+                   Developer developer1 = developerRepositoryImpl.save(developer);
+                   log.info("THE USER HAS BEEN SAVED IN THE DB: {}", developer1);
+               }
+           } catch (Exception e) {
+               log.error("The cause of the error is {}", e.getCause().getLocalizedMessage());
+               throw new Exception(e.getCause());
+           }
+
+           log.info("The avartar url is {}", Objects.requireNonNull(response.getBody()).getAvatar_url());
+
+
+           assertThat(response.getBody()).isNotNull();
+           assertThat(response.getBody().getAvatar_url()).isEqualTo("https://avatars1.githubusercontent.com/u/38135488?v=4");
+       }else{
+           log.info("User already exist in the database");
+       }
+
+
+
+    }
 
 
 //    @Test
 //    public void it_should_login_user_to_the_application() {
 //        HttpHeaders headers = new HttpHeaders();
+////        headers.add("Content-type", "application/json Accept: application/json");
 //        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 //
+//        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+//        headers.add(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
+//        log.info("The headers are as follows: {}",headers);
+//
 //        DeveloperLoginDto developerLoginDto = new DeveloperLoginDto("zanio", "MasterCraft");
-//        HttpEntity<String> entity = new HttpEntity<String>(developerLoginDto.toString(), headers);
+//        HttpEntity<DeveloperLoginDto> entity = new HttpEntity<>(developerLoginDto, headers);
 //        log.info("The method tostring {}", entity);
 //
 //        ResponseEntity<String> response = null;
-//        response = restTemplate.exchange(getRootUrl() + "user",
-//                HttpMethod.GET, entity, String.class);
+//        response = restTemplate.exchange(getRootUrl() + "api/auth/login",
+//                HttpMethod.POST, entity, String.class);
+//
+//        log.info("The return response is as follow {}",response);
 //    }
 
     @Test
@@ -148,6 +168,7 @@ public class DeveloperTest {
         GithubService githubService = new GithubService();
         List<GithubRepoResponseDao>  listOfRepository = githubService.getGitUserRepositories(authId,"user/repos");
         log.info("THE REPO LIST {}",listOfRepository);
+
     }
 
     @Test
@@ -162,17 +183,11 @@ public class DeveloperTest {
     void it_should_query_repo_based_on_oauth_scope_without_admin_access(){
         // todo Maduflavins/Authentications
         GithubService githubService = new GithubService();
-        GithubRepoResponseDao  repository = githubService.getGitUserRepository(authId,"repos/Maduflavins/Authentications");
-        log.info("THE REPO LIST {}",repository);
+        GithubRepoResponseDao  repository = githubService
+                .getGitUserRepository(authId,"repos/Maduflavins/Authentications");
+        log.info("THE REPO DETAILS {}",repository);
     }
 
-    @Test
-    void it_should_query_repo_based_on_oauth_scope_with_admin_access(){
-        // todo Maduflavins/Authentications
-        GithubService githubService = new GithubService();
-        GithubRepoResponseDao  repository = githubService.getGitUserRepository(authId,"repos/tboydv1/springAlaajoBackend");
-        log.info("THE REPO LIST {}",repository);
-    }
 
     @Test
     void it_should_push_to_github() throws IOException {
@@ -197,5 +212,17 @@ public class DeveloperTest {
 
        }
     }
+
+    @Test
+    void it_should_get_the_date_difference_between_two_dates() throws ParseException {
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd MM yyyy");
+        String dateBeforeString = "31 01 2020";
+        String dateAfterString = "02 02 2020";
+        Date dateBefore = myFormat.parse(dateBeforeString);
+        Date dateAfter = myFormat.parse(dateAfterString);
+
+    }
+
+
 
 }

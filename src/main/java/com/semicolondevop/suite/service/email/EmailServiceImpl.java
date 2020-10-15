@@ -7,7 +7,7 @@ package com.semicolondevop.suite.service.email;
  *
  */
 
-import com.semicolondevop.suite.util.RetryOnException;
+import com.semicolondevop.suite.util.helper.RetryOnException;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;

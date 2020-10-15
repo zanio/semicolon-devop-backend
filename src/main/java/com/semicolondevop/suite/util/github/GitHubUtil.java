@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.util;
+package com.semicolondevop.suite.util.github;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
