@@ -90,31 +90,38 @@ public class DeveloperTest {
 
         ResponseEntity<GithubDeveloperDao> response = null;
 
-        try {
-            response = restTemplate.exchange(getGithubRootUrl() + "user",
-                    HttpMethod.GET, entity, GithubDeveloperDao.class);
-            if (Objects.requireNonNull(response.getBody()).getLogin() != null) {
-                GithubDeveloperDao githubDeveloperDao = response.getBody();
-                githubDeveloperDao.setPassword(passwordEncoder.encode("MasterCraft"));
-                githubDeveloperDao.setPhoneNUmber("08167124344");
-                githubDeveloperDao.setAuthId(authId);
-                ApplicationUser applicationUser = new ApplicationUser(githubDeveloperDao);
-                userRepositoryImpl.save(applicationUser);
-                Developer developer = new Developer(githubDeveloperDao);
-                developer.setApplicationUser(applicationUser);
-                Developer developer1 = developerRepositoryImpl.save(developer);
-                log.info("THE USER HAS BEEN SAVED IN THE DB: {}", developer1);
-            }
-        } catch (Exception e) {
-            log.error("The cause of the error is {}", e.getCause().getLocalizedMessage());
-            throw new Exception(e.getCause());
-        }
+       if (developerRepositoryImpl.findByEmail("zanio")==null){
+           try {
+               response = restTemplate.exchange(getGithubRootUrl() + "user",
+                       HttpMethod.GET, entity, GithubDeveloperDao.class);
+               if (Objects.requireNonNull(response.getBody()).getLogin() != null) {
+                   GithubDeveloperDao githubDeveloperDao = response.getBody();
+                   githubDeveloperDao.setPassword(passwordEncoder.encode("MasterCraft"));
+                   githubDeveloperDao.setPhoneNUmber("08167124344");
+                   githubDeveloperDao.setAuthId(authId);
+                   ApplicationUser applicationUser = new ApplicationUser(githubDeveloperDao);
+                   userRepositoryImpl.save(applicationUser);
+                   Developer developer = new Developer(githubDeveloperDao);
+                   developer.setApplicationUser(applicationUser);
+                   Developer developer1 = developerRepositoryImpl.save(developer);
+                   log.info("THE USER HAS BEEN SAVED IN THE DB: {}", developer1);
+               }
+           } catch (Exception e) {
+               log.error("The cause of the error is {}", e.getCause().getLocalizedMessage());
+               throw new Exception(e.getCause());
+           }
 
-        log.info("The avartar url is {}", Objects.requireNonNull(response.getBody()).getAvatar_url());
+           log.info("The avartar url is {}", Objects.requireNonNull(response.getBody()).getAvatar_url());
 
 
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getAvatar_url()).isEqualTo("https://avatars1.githubusercontent.com/u/38135488?v=4");
+           assertThat(response.getBody()).isNotNull();
+           assertThat(response.getBody().getAvatar_url()).isEqualTo("https://avatars1.githubusercontent.com/u/38135488?v=4");
+       }else{
+           log.info("User already exist in the database");
+       }
+
+
+
     }
 
 
