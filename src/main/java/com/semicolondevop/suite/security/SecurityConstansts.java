@@ -13,7 +13,7 @@ public final class SecurityConstansts {
     public static final String HEADER_STRING = "Authorization";
     public static final String SIGN_UP_URL = "/api/developers/new";
     public static final String ADMIN_URL = "/api/admins";
-    public static final String INVESTMENT_URL = "/api/investments";
+    public static final String PASSWORD_URL = "/api/repository";
     public static final String PASSWORD_RESET_URL= "/api/password/reset";
     public static final String PASSWORD_CONFIRMATION= "/api/password/confirm";
     public static final String PASSWORD_NEW_PASSWORD= "/api/password/new";
