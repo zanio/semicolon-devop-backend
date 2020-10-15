@@ -1,0 +1,40 @@
+version: "3.4"
+
+networks:
+  internal:
+
+services:
+  web:
+    build:
+      context: .
+      args:
+        - NODE_ENV=production
+    container_name: heroku-dockerize-web
+
+    networks:
+      - internal
+    ports:
+      - "3000:${PORT}"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${PORT}/ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+  db:
+    image: redis:latest
+    container_name: heroku-dockerize-postgres
+    networks:
+      - internal
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 3
+      start_period: 1s
