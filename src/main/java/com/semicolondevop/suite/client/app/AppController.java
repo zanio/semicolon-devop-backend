@@ -44,9 +44,11 @@ public class AppController {
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request", response = ResponseEntity.class)
     })
     public ResponseEntity<?> registerSaver(@RequestBody App app,
+                                           @ApiParam(required = true, name = "lang",
+                                           value = "Language or Framework of Application") @RequestParam("lang") String lang,
                                            @ApiParam(hidden = true) HttpServletRequest request) {
         App app1 = new App(app);
-        App response = appServiceImpl.add(app1);
+        App response = appServiceImpl.add(app1,lang);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

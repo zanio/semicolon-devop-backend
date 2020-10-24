@@ -5,5 +5,19 @@ public enum TechStackType {
     REACT,
     PYTHON,
     JAVA,
-    NODE
+    NODE;
+
+    private String code;
+
+     TechStackType(String code) {
+        this.code = code;
+    }
+
+    TechStackType() {
+
+    }
+
+    public String getCode() {
+        return code;
+    }
 }
