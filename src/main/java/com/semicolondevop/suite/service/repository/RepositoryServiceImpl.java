@@ -3,13 +3,10 @@ package com.semicolondevop.suite.service.repository;
 import com.semicolondevop.suite.client.authenticationcontext.IAuthenticationFacade;
 import com.semicolondevop.suite.client.exception.ResourceNotFound;
 import com.semicolondevop.suite.model.app.App;
-import com.semicolondevop.suite.model.developer.Developer;
 import com.semicolondevop.suite.model.repository.Repository;
 import com.semicolondevop.suite.repository.app.AppRepository;
-import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.repository.github.GithubRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**

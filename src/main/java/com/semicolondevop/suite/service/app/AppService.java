@@ -8,5 +8,5 @@ import com.semicolondevop.suite.model.app.App;
  * @project com.semicolondevop.suite.service.app in ds-suite
  */
 public interface AppService {
-    App add(App app);
+    App add(App app, String lang);
 }

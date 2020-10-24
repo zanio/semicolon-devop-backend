@@ -1,2 +1,0 @@
-The code below get enviroment variable:
-heroku run echo \$JDBC_DATABASE_USERNAME

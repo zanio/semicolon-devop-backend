@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 @Data
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 public class TechStack {
 
     @Id
@@ -29,11 +30,26 @@ public class TechStack {
     @Size(max = 255)
     private TypeOfApplication typeOfApplication;
 
-    @OneToOne
-    @JoinColumn()
-    private App app;
-
-    public TechStack() {
+    public TechStack(String techStackValue) {
         this.typeOfApplication = TypeOfApplication.DECOUPLED;
+        switch(techStackValue) {
+            case "JAVA":
+                this.techStackType = TechStackType.JAVA;
+                break;
+            case "PYTHON":
+                this.techStackType = TechStackType.PYTHON;
+                break;
+            case "NODE":
+                this.techStackType = TechStackType.NODE;
+                break;
+
+            case "REACT":
+                this.techStackType = TechStackType.REACT;
+                break;
+
+            case "VUE":
+                this.techStackType = TechStackType.VUE;
+                break;
+        }
     }
 }

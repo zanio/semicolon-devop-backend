@@ -99,12 +99,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 
         log.info("user authorities ---> {}", authResult.getAuthorities());
-        log.info("user email ---> {}", authResult.getPrincipal());
+        log.info("user email ---> {}", ((User) authResult.getPrincipal()).getUsername());
         log.info("user details ---> {}", authResult.getDetails());
 
         response.setHeader("Content-type: application/json", "Accept: application/json");
         String user = ((User) authResult.getPrincipal()).getUsername();
         Developer developer = developerRepositoryImpl.findByEmail(user);
+        log.info("THE APPLICATION USER {}", developer.getApplicationUser());
         ApplicationUser applicationUser = developer.getApplicationUser();
         UserActivityLogs userLogsRepository = userLogsRepositoryImpl.findByApplicationUser(applicationUser);
 

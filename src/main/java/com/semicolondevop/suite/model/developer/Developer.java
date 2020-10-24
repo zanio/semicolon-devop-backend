@@ -61,6 +61,7 @@ public class Developer {
 
     @ApiModelProperty(hidden = true)
     @ToString.Exclude
+    @Column(unique = true,length = 300)
     private String authId;
 
     @OneToOne(cascade = {CascadeType.MERGE})
