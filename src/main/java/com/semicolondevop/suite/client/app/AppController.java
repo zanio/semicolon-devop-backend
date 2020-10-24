@@ -38,7 +38,7 @@ public class AppController {
     }
 
     @PostMapping("/")
-    @ApiOperation(value = "Create An Application Account", notes = "You can register an account with us today")
+    @ApiOperation(value = "Create An Application ", notes = "Create your account to start runing test on our platform")
     @ApiResponses({
             @io.swagger.annotations.ApiResponse(code = 200, message = "Success", response = App.class),
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request", response = ResponseEntity.class)

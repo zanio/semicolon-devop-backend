@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @project com.semicolondevop.suite.util in ds-suite
  */
 
-@SpringBootTest
+//@SpringBootTest
 @Slf4j
 class GitHubUtilTest {
 
@@ -47,6 +47,8 @@ class GitHubUtilTest {
         List<GithubRepoResponseDao> responseDaoList = GitHubUtil.listAllRepository(json);
         log.info("The github response dao{}",responseDaoList);
     }
+
+
 
 
 }

@@ -102,7 +102,7 @@ public class SpringFoxConfig  extends WebSecurityConfigurerAdapter {
     private Predicate<String> paths() {
         return or(
                 regex("/api/admin.*"),
-                regex("/api/investment.*"),
+                regex("/api/repository.*"),
                 regex("/api/developers/all"),
                 regex("/api/developers.*")
         );

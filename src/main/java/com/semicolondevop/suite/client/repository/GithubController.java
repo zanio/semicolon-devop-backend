@@ -31,9 +31,8 @@ public class GithubController {
     @ApiOperation(value = "Search for Repository which user has write and read access",
             notes = "It search on github for repository which user belongs too")
     public ResponseEntity<?> searchForGitHubRepository(
-            @ApiParam(hidden = true) WebRequest request,
-            @ApiParam(required = true, name = "full_name", value = "Repository full name ('<username>/<repo_name>')")
-            @RequestParam("full_name") String full_name,@ApiParam(hidden = true) @RequestHeader Map<String, String> headers) {
+            @ApiParam(required = true, name = "full_name", value = "Repository full name ('<username>/<repo_name>')") @RequestParam("full_name") String full_name,
+            @ApiParam(hidden = true) @RequestHeader Map<String, String> headers) {
 
         GithubRepoResponseDao repository = null;
         String authId = headers.get("Pizzly-Auth-Id");

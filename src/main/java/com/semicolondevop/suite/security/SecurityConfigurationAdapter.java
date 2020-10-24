@@ -42,9 +42,9 @@ public class SecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
     private static final RequestMatcher ADMIN_URLS = new OrRequestMatcher(
             new AntPathRequestMatcher(ADMIN_URL+"/**"),
-            new AntPathRequestMatcher(INVESTMENT_URL,"POST"),
-            new AntPathRequestMatcher(INVESTMENT_URL+"/**","PATCH"),
-            new AntPathRequestMatcher(INVESTMENT_URL+"/**","DELETE")
+            new AntPathRequestMatcher(PASSWORD_URL,"POST"),
+            new AntPathRequestMatcher(PASSWORD_URL+"/**","PATCH"),
+            new AntPathRequestMatcher(PASSWORD_URL+"/**","DELETE")
     );
 
     @Autowired
