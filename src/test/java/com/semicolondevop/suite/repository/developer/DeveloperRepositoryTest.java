@@ -1,13 +1,17 @@
 package com.semicolondevop.suite.repository.developer;
 
 import com.cdancy.jenkins.rest.JenkinsClient;
+import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
 import com.semicolondevop.suite.model.developer.Developer;
+import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
+import com.semicolondevop.suite.repository.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -36,37 +40,39 @@ class DeveloperRepositoryTest {
     @Autowired
     public DeveloperRepository developerRepositoryImpl;
 
-    Developer testDeveloper;
-    Developer testSaver1;
-    Developer testSaver2;
-
-//    @BeforeAll
-//    void
-
-    @BeforeEach
-    void setUp() throws Exception {
-        log.info("Test Saver object --> {}", testDeveloper);
-        testSaver1= new Developer();
-        testSaver1.setId(1);
-        testSaver1.setFirstname("Aniefiok");
-        testSaver1.setLastname("Akpan");
-        testSaver1.setAuthId("fjhdfhdfjhdfjh");;
-        testSaver1.setDateJoined(new Date(System.currentTimeMillis()));
-        testSaver1.setPhoneNumber("08695656120");
-        testSaver1.setImageUrl("https://localhost:2323");
-        testSaver1.setUsername("ZANIO");
-        developerRepositoryImpl.save(testSaver1);
-
-        log.info("Test Saver object --> {}", testDeveloper);
-
-    }
+    @Autowired
+    @Qualifier("user")
+    public UserRepository userRepositoryImpl;
 
 
     @Test
     void findByEmail() {
-        Developer developer = developerRepositoryImpl.findByEmail("ZANIO");
-        log.info("The devs {}",developerRepositoryImpl.findAll());
+        Developer developer = developerRepositoryImpl.findByEmail("zanio");
         assertThat(developer).isNotNull();
+    }
+
+    @Test
+    void findAll() {
+        List<Developer> developers = developerRepositoryImpl.findAll();
+        assertThat(developers.size()).isEqualTo(2);
+    }
+
+    @Test
+    void createDeveloper(){
+        GithubDeveloperDao githubDeveloperDao = new GithubDeveloperDao();
+        githubDeveloperDao.setPhoneNUmber("09034134521");
+        githubDeveloperDao.setAuthId("yreyruy dfhgjhgjh jhgjfh");
+        githubDeveloperDao.setAvatar_url("http://localhost:3000/");
+        githubDeveloperDao.setPassword("ascdf");
+        githubDeveloperDao.setLogin("github_user");
+        githubDeveloperDao.setName("GITHUB USER");
+
+        Developer developer = new Developer(githubDeveloperDao);
+        ApplicationUser applicationUser = new ApplicationUser(githubDeveloperDao);
+        ApplicationUser applicationUser1 = userRepositoryImpl.save(applicationUser);
+        developer.setApplicationUser(applicationUser1);
+        assertThat(developerRepositoryImpl.save(developer)).isNotNull();
+
     }
 
 
