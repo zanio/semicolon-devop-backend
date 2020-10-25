@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @created 16/10/2020 - 10:04 AM
  * @project com.semicolondevop.suite.service.taskrunner in ds-suite
  */
-class CommandLineRunnerTest {
+public class CommandLineRunnerTest {
 
     @BeforeEach
     void setUp() {

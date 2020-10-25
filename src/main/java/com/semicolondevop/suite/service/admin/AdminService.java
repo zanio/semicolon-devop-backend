@@ -13,17 +13,17 @@ import java.util.List;
 
 public interface AdminService {
 
-    public Admin save(Admin admin) throws UserAlreadyExistException;
+     Admin save(Admin admin) throws UserAlreadyExistException;
 
-    public List<Admin> findAllAdmin();
+     List<Admin> findAllAdmin();
 
-    public Admin findAdminById(Integer adminId);
+     Admin findAdminById(Integer adminId);
 
-    public void deleteById(Integer adminId);
+     void deleteById(Integer adminId);
 
     Admin update(Admin admin);
 
     Admin findUserByEmail(String email);
 
-    public Developer convertPassword(Integer saverId);
+     Developer convertPassword(Integer saverId);
 }
