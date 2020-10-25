@@ -5,10 +5,7 @@ import com.semicolondevop.suite.model.techStack.TechStack;
 import com.semicolondevop.suite.model.techStack.TechStackType;
 import com.semicolondevop.suite.model.techStack.TypeOfApplication;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -25,6 +22,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Repository {
 
     @Id
@@ -51,6 +49,15 @@ public class Repository {
         this.repoLink = repository.getRepoLink();
         this.app = app;
 
+        innerFieldAttachment(app);
+    }
+    public Repository(App app) {
+        this.app = app;
+
+        innerFieldAttachment(app);
+    }
+
+    private void innerFieldAttachment(App app) {
         if(app.getTechStack().getTypeOfApplication() == TypeOfApplication.DECOUPLED){
             TechStackType techStackType = app.getTechStack().getTechStackType();
             if(techStackType == TechStackType.JAVA){

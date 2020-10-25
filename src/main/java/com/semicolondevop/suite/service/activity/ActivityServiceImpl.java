@@ -14,6 +14,7 @@ import java.util.List;
  * @created 12/10/2020 - 5:07 AM
  * @project com.semicolondevop.suite.service.activity in ds-suite
  */
+
 @Service
 public class ActivityServiceImpl implements ActivityService {
     private final ActivityRepository activityRepo;
