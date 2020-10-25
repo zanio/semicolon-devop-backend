@@ -35,5 +35,12 @@ class TechStackRepositoryTest {
         List<TechStack> developers = techStackRepositoryImpl.findAll();
         assertThat(developers.size()).isEqualTo(2);
     }
+    @Test
+    void createTechStack(){
+
+        TechStack techStack = new TechStack("JAVA");
+        techStack.setId(10);
+        assertThat(techStackRepositoryImpl.save(techStack)).isNotNull();
+    }
 
 }
