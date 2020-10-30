@@ -75,7 +75,7 @@ pipeline {
     parameters {
         choice(choices: "$environment", description: '', name: 'ENVIRONMENT')
         string(defaultValue: "$emailRecipients",
-                description: 'List of email recipients',
+                description: 'List of emails recipients',
                 name: 'EMAIL_RECIPIENTS')
     }
 
