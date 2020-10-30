@@ -297,6 +297,25 @@ public class DeveloperTest {
 //        assertThat(output.jobs().size();
     }
 
+    @Test
+    public void testCreateFoldersInJenkins() {
+        String config = payloadFromResource("/jenkins/folder-config.xml");
+        String output = client().api().jobsApi().config(null,"test");
+        if(output == null){
+        RequestStatus success1 = client().api().jobsApi().create(null, "test", config);
+        assertThat(success1.value()).isTrue();
+        }
+        log.info("THE FOLDER IS {}",output );
+//
+
+    }
+
+
+//    @Test
+//    public void testGetConfig() {
+//        String output = client().api().jobsApi().config(null, "DevTest");
+//        assertThat(output).isNotNull();
+//    }
 
     @Test
     public void it_should_create_credentials() throws Exception {
