@@ -186,7 +186,7 @@ public class DeveloperTest {
         HttpEntity<String> entity = new HttpEntity<String>(name, headers);
 
         ResponseEntity<String> response = null;
-        response = restTemplate.exchange(getGithubRootUrl() + "repos/zanio/semicolon-devop-backend/generate",
+        response = restTemplate.exchange(getGithubRootUrl() + "repos/zanio/senicolon-devop-backend/generate",
                 HttpMethod.POST, entity, String.class);
 
         log.info("The response was successfully retrieved {}", response);
