@@ -4,10 +4,10 @@ package com.semicolondevop.suite.security;
  *created on 5/17/2020
  *inside the package */
 
-import com.semicolondevop.suite.client.exception.securitylayerexeception.RestAccessDeniedHandler;
-import com.semicolondevop.suite.client.exception.securitylayerexeception.RestAuthenticationEntryPoint;
-import com.semicolondevop.suite.client.exception.securitylayerexeception.RestAuthenticationFailureHandler;
-import com.semicolondevop.suite.client.exception.securitylayerexeception.RestAuthenticationSuccessHandler;
+import com.semicolondevop.suite.exception.securitylayerexeception.RestAccessDeniedHandler;
+import com.semicolondevop.suite.exception.securitylayerexeception.RestAuthenticationEntryPoint;
+import com.semicolondevop.suite.exception.securitylayerexeception.RestAuthenticationFailureHandler;
+import com.semicolondevop.suite.exception.securitylayerexeception.RestAuthenticationSuccessHandler;
 import com.semicolondevop.suite.service.developer.UserDetailsServiceImpl;
 import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;

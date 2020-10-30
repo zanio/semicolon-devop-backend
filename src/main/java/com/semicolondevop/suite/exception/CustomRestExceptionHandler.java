@@ -1,15 +1,19 @@
-package com.semicolondevop.suite.client.exception;
+package com.semicolondevop.suite.exception;
 /*
  *@author tobi
  * created on 29/04/2020
  *
  */
 
+import com.cloudinary.api.ApiResponse;
 import com.semicolondevop.suite.client.genericresponse.ResponseApi;
+import com.semicolondevop.suite.exception.restTemplate.ErrorResponse;
+import com.semicolondevop.suite.exception.restTemplate.MyRestTemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -19,6 +23,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -175,6 +180,12 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new org.springframework.http.ResponseEntity(
                 responseApi, new HttpHeaders(), responseApi.getStatus());
+    }
+
+    @ExceptionHandler(value = MyRestTemplateException.class)
+    ResponseEntity<ErrorResponse> handleMyRestTemplateException(MyRestTemplateException ex, HttpServletRequest request) {
+        log.error("An error happened while calling {} Downstream API: {}", ex.getError().getMessage(), ex.toString());
+        return new ResponseEntity<>(new ErrorResponse(ex, request.getRequestURI()), ex.getStatusCode());
     }
 
 }

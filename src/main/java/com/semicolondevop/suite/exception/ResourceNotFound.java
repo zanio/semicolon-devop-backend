@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.client.exception;
+package com.semicolondevop.suite.exception;
 
 import lombok.NoArgsConstructor;
 

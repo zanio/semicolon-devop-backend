@@ -1,22 +1,18 @@
 package com.semicolondevop.suite.service.admin;
 
-import com.semicolondevop.suite.client.exception.UserAlreadyExistException;
+import com.semicolondevop.suite.exception.UserAlreadyExistException;
 import com.semicolondevop.suite.model.admin.Admin;
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
-import com.semicolondevop.suite.model.developer.Developer;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
 import java.security.SecureRandom;
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 

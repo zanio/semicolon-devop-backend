@@ -4,7 +4,7 @@ import org.openapitools.jackson.nullable.JsonNullable;
 
 import java.util.function.Consumer;
 
-public class JsonNullableUtils {
+public final class JsonNullableUtils {
 
     private JsonNullableUtils() {}
 

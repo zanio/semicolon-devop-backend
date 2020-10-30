@@ -23,7 +23,7 @@ import java.util.Objects;
  */
 
 @Slf4j
-public class GithubService {
+public final class GithubService {
 
     /**
      * @param pathToFileInResourceFolder

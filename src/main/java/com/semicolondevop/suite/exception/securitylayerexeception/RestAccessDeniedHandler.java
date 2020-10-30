@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.client.exception.securitylayerexeception;
+package com.semicolondevop.suite.exception.securitylayerexeception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
