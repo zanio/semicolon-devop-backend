@@ -4,11 +4,10 @@ package com.semicolondevop.suite.service.admin;
  *created on 5/16/2020
  *inside the package */
 
-import com.semicolondevop.suite.client.exception.UserAlreadyExistException;
+import com.semicolondevop.suite.exception.UserAlreadyExistException;
 import com.semicolondevop.suite.model.admin.Admin;
 import com.semicolondevop.suite.model.developer.Developer;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface AdminService {

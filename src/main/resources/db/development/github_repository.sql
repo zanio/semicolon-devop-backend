@@ -42,13 +42,13 @@ INSERT INTO ds_suite_test_db.public.app(id, domain,name,title,description,tech_s
 VALUES (1, 'config/backend/javaConfig.yml', 'app 1', 'title 1','description 1',1,45 );
 
 INSERT INTO ds_suite_test_db.public.app(id, domain,name,title,description,tech_stack_id,developer_id)
-VALUES (2, 'config/backend/javaConfig.yml', 'app 1', 'title 1','description 1',2,45 );
+VALUES (2, 'config/backend/javaConfig.yml', 'zanio', 'title 1','description 1',2,45 );
 
 INSERT INTO ds_suite_test_db.public.repository(id, path_to_configuration_file, repo_link, full_name, date_created, app_id)
 VALUES (1, 'config/backend/javaConfig.yml', 'http://localhost:3000/zanio', 'ANIEFIOK AKPAN',NOW(), 1);
 
 
 INSERT INTO ds_suite_test_db.public.repository(id, path_to_configuration_file, repo_link, full_name, date_created, app_id)
-VALUES (2, 'config/backend/javaConfig.yml', 'http://localhost:3000/zanio', 'ANIEFIOK AKPAN',NOW(), 2);
+VALUES (2, 'config/backend/javaConfig.yml', 'https://github.com/zanio/semicolon-devop-backend', 'zanio/semicolon-devop-backend',NOW(), 2);
 
 

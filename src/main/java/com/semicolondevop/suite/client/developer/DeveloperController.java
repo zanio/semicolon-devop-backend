@@ -6,19 +6,16 @@ package com.semicolondevop.suite.client.developer;
  */
 
 
-import com.semicolondevop.suite.client.event.OnRegistrationCompleteEvent;
-import com.semicolondevop.suite.client.exception.UserAlreadyExistException;
+import com.semicolondevop.suite.exception.UserAlreadyExistException;
 import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
 import com.semicolondevop.suite.service.cloudinary.CloudinaryService;
 import com.semicolondevop.suite.service.json.JsonObject;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.semicolondevop.suite.client.authenticationcontext.IAuthenticationFacade;
 import com.semicolondevop.suite.client.dto.DeveloperDto;
-import com.semicolondevop.suite.client.exception.ResourceNotFound;
+import com.semicolondevop.suite.exception.ResourceNotFound;
 import com.semicolondevop.suite.client.genericresponse.ResponseApi;
 import com.semicolondevop.suite.model.developer.Developer;
 import com.semicolondevop.suite.service.developer.DeveloperService;
-import com.semicolondevop.suite.service.json.JsonObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

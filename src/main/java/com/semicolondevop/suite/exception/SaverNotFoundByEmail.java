@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.client.exception;
+package com.semicolondevop.suite.exception;
 
 /* Aniefiok
  *created on 5/18/2020

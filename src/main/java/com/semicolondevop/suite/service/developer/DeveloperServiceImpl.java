@@ -8,8 +8,8 @@ package com.semicolondevop.suite.service.developer;
 import com.semicolondevop.suite.client.authenticationcontext.AuthenticationFacade;
 import com.semicolondevop.suite.client.dto.DeveloperDto;
 
-import com.semicolondevop.suite.client.exception.ResourceNotFound;
-import com.semicolondevop.suite.client.exception.UserAlreadyExistException;
+import com.semicolondevop.suite.exception.ResourceNotFound;
+import com.semicolondevop.suite.exception.UserAlreadyExistException;
 import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
 import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;

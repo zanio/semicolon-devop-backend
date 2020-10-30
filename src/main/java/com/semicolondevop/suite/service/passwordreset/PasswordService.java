@@ -4,7 +4,7 @@ package com.semicolondevop.suite.service.passwordreset;
  *created on 5/24/2020
  *inside the package */
 
-import com.semicolondevop.suite.client.exception.ResourceNotFound;
+import com.semicolondevop.suite.exception.ResourceNotFound;
 import com.semicolondevop.suite.model.admin.Admin;
 import com.semicolondevop.suite.model.passwordreset.PasswordReset;
 import com.semicolondevop.suite.model.developer.Developer;

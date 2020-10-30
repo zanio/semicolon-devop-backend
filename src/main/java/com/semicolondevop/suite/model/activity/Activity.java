@@ -38,7 +38,7 @@ public class Activity {
     private String expires;
 
     @OneToOne
-//    @JsonBackReference
+    @JsonBackReference
     private Developer developer;
 
     private String requestMethod;

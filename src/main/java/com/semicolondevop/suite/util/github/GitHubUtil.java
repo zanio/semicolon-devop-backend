@@ -19,7 +19,7 @@ import java.util.List;
 
 
 @Slf4j
-public class GitHubUtil {
+public final class GitHubUtil {
     public static List<GithubRepoResponseDao> listAllRepository(String json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         GithubRepoResponseDao[] githubRepoResponseDaos = null;

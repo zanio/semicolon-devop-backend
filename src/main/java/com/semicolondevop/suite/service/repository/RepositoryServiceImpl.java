@@ -1,7 +1,7 @@
 package com.semicolondevop.suite.service.repository;
 
 import com.semicolondevop.suite.client.authenticationcontext.IAuthenticationFacade;
-import com.semicolondevop.suite.client.exception.ResourceNotFound;
+import com.semicolondevop.suite.exception.ResourceNotFound;
 import com.semicolondevop.suite.model.app.App;
 import com.semicolondevop.suite.model.repository.Repository;
 import com.semicolondevop.suite.repository.app.AppRepository;

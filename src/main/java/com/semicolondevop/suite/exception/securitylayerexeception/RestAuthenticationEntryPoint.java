@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.client.exception.securitylayerexeception;
+package com.semicolondevop.suite.exception.securitylayerexeception;
 
 /* Aniefiok
  *created on 5/15/2020

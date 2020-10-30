@@ -1,4 +1,4 @@
-package com.semicolondevop.suite.client.exception.securitylayerexeception;
+package com.semicolondevop.suite.exception.securitylayerexeception;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;

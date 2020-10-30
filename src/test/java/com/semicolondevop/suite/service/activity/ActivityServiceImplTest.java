@@ -1,6 +1,6 @@
 package com.semicolondevop.suite.service.activity;
 
-import com.semicolondevop.suite.client.exception.UserAlreadyExistException;
+import com.semicolondevop.suite.exception.UserAlreadyExistException;
 import com.semicolondevop.suite.model.activity.Activity;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
