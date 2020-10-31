@@ -1,6 +1,8 @@
 package com.semicolondevop.suite;
 
+import com.cdancy.jenkins.rest.JenkinsClient;
 import com.cloudinary.Cloudinary;
+import com.semicolondevop.suite.util.helper.Encoder_Decoder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,6 +29,12 @@ public class SuiteApplication {
 
     private  static String  myfile = "my file is \"go\"";
 
+    @Value("${jenkins.auth}")
+    private String jenkinsCredentials;
+
+    @Value("${jenkins.url}")
+    private String jenkinsUrl;
+
     public static void main(String[] args) {
         SpringApplication.run(SuiteApplication.class, args);
     }
@@ -48,6 +56,15 @@ public class SuiteApplication {
         config.put("api_secret", apiSecret);
         cloudinary = new Cloudinary(config);
         return cloudinary;
+    }
+
+    @Bean
+    public JenkinsClient client() {
+        String encodedStr = Encoder_Decoder.encodeStr(jenkinsCredentials);
+        return JenkinsClient.builder()
+                .endPoint(jenkinsUrl) // Optional. Defaults to http://127.0.0.1:8080
+                .credentials(encodedStr) // Optional.
+                .build();
     }
 
 

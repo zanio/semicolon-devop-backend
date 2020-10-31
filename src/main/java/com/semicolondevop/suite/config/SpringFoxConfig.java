@@ -104,7 +104,8 @@ public class SpringFoxConfig  extends WebSecurityConfigurerAdapter {
                 regex("/api/admin.*"),
                 regex("/api/repository.*"),
                 regex("/api/developers/all"),
-                regex("/api/developers.*")
+                regex("/api/developers.*"),
+                regex("/api/app.*")
         );
     }
 

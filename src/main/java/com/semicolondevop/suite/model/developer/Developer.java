@@ -64,6 +64,10 @@ public class Developer {
     @Column(unique = true,length = 300)
     private String authId;
 
+    @ApiModelProperty(hidden = true)
+    @Column(unique = true,length = 300)
+    private String accessToken;
+
     @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn()
     @ApiModelProperty(hidden = true)

@@ -60,22 +60,16 @@ public final class HttpConnection<T, R> {
      * @return ResponseEntity of Type T
      * @throws Exception
      */
-    public ResponseEntity<T> getService(@NotNull String context, String query) throws Exception {
+    public ResponseEntity<T> getService(@NotNull String context, String query)  throws MyRestTemplateException {
         HttpEntity<R> entity = new HttpEntity<>(null, headers);
         ResponseEntity<T> response = null;
-        try {
-            String queryConcate = "?"+query;
-            String buildContext = query != null?context+queryConcate:context;
-            log.info("THE TYPE OF CLASS {} and the complete path {}",tType,buildContext);
-            log.info("the entity {} {}",entity,getConnectionUrl()+buildContext);
-            response = restTemplate.exchange(getConnectionUrl() + buildContext,
-                    HttpMethod.GET, entity, tType);
-            log.info("THE RESPONSE IS AS FOLLOW");
 
-        } catch (Exception e){
-            log.error("THE ERROR OCCURRED DURING GET AND THE CAUSE OF THE ERROR IS: {}", e.getCause().getLocalizedMessage());
-            throw new Exception(e.getCause());
-        }
+        String queryConcate = "?"+query;
+        String buildContext = query != null?context+queryConcate:context;
+        log.info("THE TYPE OF CLASS {} and the complete path {}",tType,buildContext);
+        log.info("the entity {} {}",entity,getConnectionUrl()+buildContext);
+        response = restTemplate.exchange(getConnectionUrl() + buildContext,
+                HttpMethod.GET, entity, tType);
 
         return response;
     }
@@ -104,18 +98,13 @@ public final class HttpConnection<T, R> {
      * @return
      * @throws Exception
      */
-    public ResponseEntity<T> putService(String context,R r) throws Exception {
+    public ResponseEntity<T> putService(String context,R r)  throws MyRestTemplateException {
         HttpEntity<R> entity = new HttpEntity<>(r, headers);
         ResponseEntity<T> response = null;
-        try {
-            response = restTemplate.exchange(getConnectionUrl() + context,
-                    HttpMethod.PUT, entity, tType);
-            log.info("Response from putService {}",response.getBody());
 
-        } catch (Exception e){
-            log.error("THE ERROR OCCURRED DURING PUT AND THE CAUSE OF THE ERROR IS: {}", e.getCause().getLocalizedMessage());
-            throw new Exception(e.getCause());
-        }
+        response = restTemplate.exchange(getConnectionUrl() + context,
+                HttpMethod.PUT, entity, tType);
+        log.info("Response from putService {}",response.getBody());
 
         return response;
     }
@@ -127,18 +116,13 @@ public final class HttpConnection<T, R> {
      * @return
      * @throws Exception
      */
-    public ResponseEntity<T> patchService(String context,R r) throws Exception {
+    public ResponseEntity<T> patchService(String context,R r)  throws MyRestTemplateException {
         HttpEntity<R> entity = new HttpEntity<>(r, headers);
         ResponseEntity<T> response = null;
-        try {
-            response = restTemplate.exchange(getConnectionUrl() + context,
-                    HttpMethod.PATCH, entity, tType);
-            log.info("RESPONSE PATCH  {}",response.getBody());
 
-        } catch (Exception e){
-            log.error("THE ERROR OCCURRED DURING PATCH AND THE CAUSE OF THE ERROR IS: {}", e.getCause().getLocalizedMessage());
-            throw new Exception(e.getCause());
-        }
+        response = restTemplate.exchange(getConnectionUrl() + context,
+                HttpMethod.PATCH, entity, tType);
+        log.info("RESPONSE PATCH  {}",response.getBody());
 
         return response;
     }

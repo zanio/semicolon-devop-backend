@@ -3,6 +3,7 @@ package com.semicolondevop.suite.dao;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import javax.persistence.Entity;
 import java.util.Date;
 import java.util.UUID;
 
@@ -22,6 +23,8 @@ public class CreateJenkinsCredentials {
     private String username;
     private String password;
     private String description;
+
+
 
     @JsonProperty("stapler-class")
     private String staplerclass;
