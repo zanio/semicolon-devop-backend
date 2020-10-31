@@ -155,6 +155,7 @@ public class JenkinsTest extends BasicConfig {
                 "header info {}",crumb.getCrumbSession());
         crumb.setDeveloper(developer);
         log.info("THE CRUMB DATA {}", crumb);
+//       Create Jenkins Credentials
         Map<String, String> headerConfigJenkinsCredential =  new HashMap<>();
 
         headerConfigJenkinsCredential.put("Accept","application/json");
@@ -183,8 +184,9 @@ public class JenkinsTest extends BasicConfig {
             ResponseEntity<String> successResponse =
                     httpConnection1.postService("credentials/store/system/domain/_/createCredentials",map);
             log.info("The request was successful {}", successResponse);
+//            Create  Job
             ModifyXMLFile modifyXMLFile = new ModifyXMLFile();
-            Repository repository = githubRepositoryImpl.findById(2).orElseThrow(()->new Exception("Id not find"));
+            Repository repository = githubRepositoryImpl.findById(1).orElseThrow(()->new Exception("Id not find"));
             String github = "https://github.com/"+repository.getFullName();
 
 

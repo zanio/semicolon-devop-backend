@@ -1,5 +1,8 @@
 package com.semicolondevop.suite.util.github;
 
+import com.semicolondevop.suite.dao.webhook.GithubWebhookConfiguration;
+import com.semicolondevop.suite.dao.webhook.GithubWebhookPayload;
+import com.semicolondevop.suite.dao.webhook.WebhookResponse;
 import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
 import com.semicolondevop.suite.model.developer.PushToGithubResponse;
 import com.semicolondevop.suite.model.repository.dao.get.GithubRepoResponseDao;
@@ -192,6 +195,36 @@ public final class GithubService {
             log.error("ERROR OCCURRED IN THE getGitUserRepository {}", e.getCause().getLocalizedMessage());
         }
         return githubRepoResponseDao;
+    }
+
+
+    /**
+     * @param authId
+     * @param context
+     * @param webHookUrl
+     * @return WebHookResponse
+     */
+    public WebhookResponse createGithubWebHook(String authId, String context, String webHookUrl) {
+        WebhookResponse webhookResponse = null;
+        try {
+            GithubRestTemplate<WebhookResponse, GithubWebhookPayload>
+                    githubRestTemplate
+                    = new GithubRestTemplate<>(authId, WebhookResponse.class);
+            GithubWebhookPayload githubWebhookPayload = new GithubWebhookPayload();
+            githubWebhookPayload.setActive(true);
+            githubWebhookPayload.setName("web");
+            githubWebhookPayload.add("push");
+            githubWebhookPayload.add("pull_request");
+            GithubWebhookConfiguration githubWebhookConfiguration = new GithubWebhookConfiguration();
+            githubWebhookConfiguration.setContent_type("json");
+            githubWebhookConfiguration.setInsecure_ssl("1");
+            githubWebhookConfiguration.setUrl(webHookUrl);
+            githubWebhookPayload.setConfig(githubWebhookConfiguration);
+            webhookResponse = githubRestTemplate.postService(context, githubWebhookPayload).getBody();
+        } catch (Exception e) {
+            log.error("ERROR OCCURRED IN THE getGitUserRepository {}", e.getCause().getLocalizedMessage());
+        }
+        return webhookResponse;
     }
 
 
