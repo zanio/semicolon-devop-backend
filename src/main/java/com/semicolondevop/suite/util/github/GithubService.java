@@ -220,6 +220,7 @@ public final class GithubService {
             githubWebhookConfiguration.setInsecure_ssl("1");
             githubWebhookConfiguration.setUrl(webHookUrl);
             githubWebhookPayload.setConfig(githubWebhookConfiguration);
+            log.info("THE APPLICATION GITHUBWEBHOOKPAYLOAD {}", githubWebhookPayload);
             webhookResponse = githubRestTemplate.postService(context, githubWebhookPayload).getBody();
         } catch (Exception e) {
             log.error("ERROR OCCURRED IN THE getGitUserRepository {}", e.getCause().getLocalizedMessage());
@@ -227,5 +228,40 @@ public final class GithubService {
         return webhookResponse;
     }
 
+    /**
+     *
+     * @param authId
+     * @param context
+     * @return
+     */
+    public List<WebhookResponse> githubWebHooks(String authId, String context) {
+        List<WebhookResponse> responseDaoList = new ArrayList<>();
+        try {
+            GithubRestTemplate<WebhookResponse[], String>
+                    githubRestTemplate
+                    = new GithubRestTemplate<>(authId, WebhookResponse[].class);
+            WebhookResponse[] githubRepoResponseDaos = githubRestTemplate.getService(context, null).getBody();
+            if (githubRepoResponseDaos != null && githubRepoResponseDaos.length > 0) {
+                responseDaoList = Arrays.asList(Objects.requireNonNull(githubRepoResponseDaos));
+
+            }
+        } catch (Exception e) {
+            log.error("ERROR OCCURRED IN THE getGitUserRepository {}", e.getCause().getLocalizedMessage());
+        }
+        return responseDaoList;
+    }
+
+
+    public void deleteRepositoryWebHookById(String authId, String context) {
+        try {
+            GithubRestTemplate<String, String>
+                    githubRestTemplate
+                    = new GithubRestTemplate<>(authId, String.class);
+
+           githubRestTemplate.delete(context, null);
+        } catch (Exception e) {
+            log.error("ERROR OCCURRED IN THE getGitUserRepository {}", e.getCause().getLocalizedMessage());
+        }
+    }
 
 }
