@@ -135,6 +135,30 @@ public class GithubRestTemplate<T, R> {
         return response;
     }
 
+    /**
+     *
+     * @param context IT should Perform method Post
+     * @param r
+     * @return
+     * @throws Exception
+     */
+    public void delete(String context,R r) throws Exception {
+        HttpEntity<R> entity = new HttpEntity<>(r, headers);
+
+        try{
+
+        restTemplate.exchange(getGithubRootUrl() + context,
+                    HttpMethod.DELETE, entity, tType);
+            log.info("RESPONSE DELETE METHOD SUCCESSFUL");
+
+        } catch (Exception e){
+            log.error("THE ERROR OCCURRED DURING PATCH AND THE CAUSE OF THE ERROR IS: {}", e.getCause().getLocalizedMessage());
+            throw new Exception(e.getCause());
+        }
+
+    }
+
+
 
 
     private String getGithubRootUrl(){

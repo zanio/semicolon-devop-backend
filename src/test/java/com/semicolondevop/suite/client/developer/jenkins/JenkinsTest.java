@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.semicolondevop.suite.dao.AccessTokenResponse;
 import com.semicolondevop.suite.dao.CreateJenkinsCredentials;
 import com.semicolondevop.suite.dao.CredentialPayload;
+import com.semicolondevop.suite.dao.webhook.WebhookResponse;
 import com.semicolondevop.suite.exception.restTemplate.MyRestTemplateException;
 import com.semicolondevop.suite.model.crumb.Crumb;
 import com.semicolondevop.suite.model.developer.Developer;
@@ -15,6 +16,7 @@ import com.semicolondevop.suite.model.repository.Repository;
 import com.semicolondevop.suite.repository.developer.DeveloperRepository;
 import com.semicolondevop.suite.repository.github.GithubRepository;
 import com.semicolondevop.suite.service.json.JsonObject;
+import com.semicolondevop.suite.util.github.GithubService;
 import com.semicolondevop.suite.util.helper.Encoder_Decoder;
 import com.semicolondevop.suite.util.helper.ModifyXMLFile;
 import com.semicolondevop.suite.util.helper.RandomString;
@@ -33,6 +35,7 @@ import org.springframework.util.MultiValueMap;
 import javax.transaction.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -219,6 +222,23 @@ public class JenkinsTest extends BasicConfig {
         credentialPayload.setCreateJenkinsCredentials(createJenkinsCredentials);
         ObjectNode objectNode = jsonObject.convObjToONode(credentialPayload);
         log.info("the object node {}", objectNode);
+    }
+
+    @Test
+    public void it_should_create_a_webhook() throws Exception {
+        Repository repository = githubRepositoryImpl.findById(1).orElseThrow(()->new Exception("Id not find"));
+        GithubService githubService = new GithubService();
+        String webhookUrlValue = "/repos/" + repository.getFullName() + "/hooks";
+        List<WebhookResponse> webhookResponseList = githubService.githubWebHooks(authId,webhookUrlValue);
+        WebhookResponse webhookResponse = webhookResponseList.stream().findFirst().get();
+        if(webhookResponse != null){
+            Integer integer = webhookResponseList.stream().findFirst().get().getId();
+            githubService.deleteRepositoryWebHookById(authId,webhookUrlValue+"/"+integer);
+        }
+
+        WebhookResponse webhookResponseCreateHooks =
+                githubService.createGithubWebHook(authId, webhookUrlValue, jenkinsUrl + "github-webhook/");
+        log.info("THE WEBHOOK WAS CREATED SUCCESSFULLY {}", webhookResponse);
     }
 
 
