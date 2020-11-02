@@ -21,10 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @created 24/10/2020 - 11:10 PM
  * @project com.semicolondevop.suite.repository.teckStack in ds-suite
  */
+//todo: Read what @Transactional annotation does
 @SpringBootTest(properties = "spring.profiles.active=test")
 @Sql(scripts={"classpath:/db/development/tech_stack.sql"})
 @Slf4j
-@Transactional
+//@Transactional
 @ActiveProfiles("test")
 class TechStackRepositoryTest {
 

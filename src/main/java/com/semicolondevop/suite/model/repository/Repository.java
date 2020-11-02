@@ -32,6 +32,7 @@ public class Repository {
 
     private String fullName;
 
+    @ApiModelProperty(hidden = true)
     private String pathToConfigurationFile;
 
     private String repoLink;
@@ -69,7 +70,7 @@ public class Repository {
             } else if(techStackType == TechStackType.VUE){
                 this.pathToConfigurationFile = RepoLinkConstant.VUE;
             } else if(techStackType == TechStackType.REACT){
-                this.repoLink = RepoLinkConstant.REACT;
+                this.pathToConfigurationFile = RepoLinkConstant.REACT;
             };
 
         }

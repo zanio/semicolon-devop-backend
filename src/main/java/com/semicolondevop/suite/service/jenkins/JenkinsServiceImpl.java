@@ -34,7 +34,9 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -156,27 +158,33 @@ public class JenkinsServiceImpl extends BasicConfig {
 
             String config = payloadFromResource("/jenkins/jobs/jenkins-pipeline.xml");
             log.info("THE CONFIG {}", config);
-            int size = client.api().jobsApi().jobList(developer.getUsername()).jobs().size() + 1;
             String output = client.api().jobsApi().config(null, developer.getUsername());
             if (output == null) {
-                RequestStatus success = client.api().jobsApi().create(developer.getUsername(),
-                        new RandomString(12).nextString(size + "-"
-                                + repository.getApp().getDeveloper().getUsername()
-                                + "-" + repository.getApp().getName()), config);
+                String configs = payloadFromResource("/jenkins/folder-config.xml");
+                RequestStatus success1 = client.api().jobsApi().create(null, developer.getUsername(), configs);
+                if(success1.value()){
+                    int size = client.api().jobsApi().jobList(developer.getUsername()).jobs().size() + 1;
 
-                log.info("THE JOB WAS SUCCESSFULLY CREATED {}", success);
-                if (success.value()) {
-                    String webhookUrlValue = "/repos/" + repository.getFullName() + "/hooks";
-                    WebhookResponse webhookResponse =
-                            githubService.createGithubWebHook(authId, webhookUrlValue, jenkinsUrl + "/github-webhook/");
-                    log.info("THE WEBHOOK WAS CREATED SUCCESSFULLY {}", webhookResponse);
-                    RepoResponsePush repoResponsePush = githubService
-                            .pushToGithub("config/backend/Jenkinsfile",
-                                    repository.getFullName(),
-                                    "Jenkinsfile", authId);
-                    log.info("THE REPO RESPONSE IS AS FOLLOW {}", repoResponsePush);
+                    RequestStatus success = client.api().jobsApi().create(developer.getUsername(),
+                            new RandomString(12).nextString(size + "-"
+                                    + repository.getApp().getDeveloper().getUsername()
+                                    + "-" + repository.getApp().getName()), config);
 
+                    log.info("THE JOB WAS SUCCESSFULLY CREATED {}", success);
+                    if (success.value()) {
+                        String webhookUrlValue = "/repos/" + repository.getFullName() + "/hooks";
+                        WebhookResponse webhookResponse =
+                                githubService.createGithubWebHook(authId, webhookUrlValue, jenkinsUrl + "/github-webhook/");
+                        log.info("THE WEBHOOK WAS CREATED SUCCESSFULLY {}", webhookResponse);
+                        RepoResponsePush repoResponsePush = githubService
+                                .pushToGithub("config/backend/Jenkinsfile",
+                                        repository.getFullName(),
+                                        "Jenkinsfile", authId);
+                        log.info("THE REPO RESPONSE IS AS FOLLOW {}", repoResponsePush);
+
+                    }
                 }
+
             }
 
 

@@ -31,6 +31,7 @@ import com.google.common.base.Throwables;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -228,6 +229,28 @@ public class DeveloperTest {
 
     }
 
+
+    @Test
+    public void it_should_login_user_to_the_application() {
+        HttpHeaders headers = new HttpHeaders();
+        final Map<String, String> parameterMap = new HashMap<String, String>(4);
+        parameterMap.put("charset", "utf-8");
+        headers.setContentType(new MediaType("application", "json",parameterMap));
+
+
+
+//        headers.setAccept(new MediaType("application", "json"));
+//        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+//        headers.add(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
+
+        DeveloperLoginDto developerLoginDto = new DeveloperLoginDto("Maduflavins", "Password1$");
+        HttpEntity<DeveloperLoginDto> entity = new HttpEntity<>(developerLoginDto, headers);
+        log.info("The method tostring {}", entity);
+//
+//        ResponseEntity<String> response = null;
+//        response = restTemplate.exchange(getRootUrl() + "/api/auth/login",
+//                HttpMethod.POST, entity, String.class);
+    }
 
 
 

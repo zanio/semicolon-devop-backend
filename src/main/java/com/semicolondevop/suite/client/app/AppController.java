@@ -1,5 +1,6 @@
 package com.semicolondevop.suite.client.app;
 
+import com.semicolondevop.suite.client.genericresponse.ResponseApi;
 import com.semicolondevop.suite.model.app.App;
 import com.semicolondevop.suite.model.developer.Developer;
 import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
@@ -74,7 +75,11 @@ public class AppController {
     public ResponseEntity<?> setUpApp(@ApiParam(required = true, name = "id",
             value = "ID of the repository") @RequestParam("id") Integer id) {
         Repository repository = githubRepositoryImpl.findById(id).get();
-        //            JenkinsServiceImpl
+        if(repository == null){
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseApi(HttpStatus.BAD_REQUEST,"The repository was not found"));
+        }
         jenkinsServiceImpl.setUpAppForJenkinsCI(repository);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(repository);

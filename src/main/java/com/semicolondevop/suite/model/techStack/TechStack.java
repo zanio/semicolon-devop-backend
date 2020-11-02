@@ -23,11 +23,9 @@ public class TechStack {
     private Integer id;
 
     @NotNull(message = "techStackType field cannot be null")
-    @Size(max = 255)
     private TechStackType techStackType;
 
     @NotNull
-    @Size(max = 255)
     private TypeOfApplication typeOfApplication;
 
     public TechStack(String techStackValue) {
