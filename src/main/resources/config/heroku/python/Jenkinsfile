@@ -1,0 +1,24 @@
+node{
+    stage('Git CheckOut'){
+        git credentialsId: 'github', url: 'https://github.com/Maduflavins/mjt.git'
+
+    }
+    stage('Build Project'){
+        sh 'pip3 install -r requirements.txt'
+    }
+
+    stage('Test'){
+        sh 'python3 manage.py test'
+    }
+    stage('Deploy Heroku'){
+        withCredentials([usernamePassword(credentialsId: 'herokuAuth', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+    // some block
+  sh  '''(
+    $Email
+    $Password
+) | heroku login'''
+
+    // sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@git.heroku.com/project-devop.git')
+}
+    }
+}
