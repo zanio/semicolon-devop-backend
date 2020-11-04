@@ -2,6 +2,8 @@ package com.semicolondevop.suite.client.developer;
 
 
 import com.cdancy.jenkins.rest.JenkinsClient;
+import com.semicolondevop.suite.dao.GithubRepoContentListFiles;
+import com.semicolondevop.suite.dao.GithubRepoFiles;
 import com.semicolondevop.suite.dao.webhook.WebhookResponse;
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
 import com.semicolondevop.suite.model.developer.*;
@@ -35,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -199,9 +202,9 @@ public class DeveloperTest {
     void it_should_push_to_github() throws IOException {
         GithubService githubService = new GithubService();
         RepoResponsePush repoResponsePush = githubService
-                .pushToGithub(".travis.yml",
-                        "zanio/semicolon-devop-backend",
-                        "config/.travis.yml", authId);
+                .pushToGithub("config/heroku/java/Jenkinsfile",
+                        "zanio/auth-app",
+                        "Jenkinsfile", authId);
 
         log.info("THE RESPONSE FROM GITHUB {} ", repoResponsePush);
 
@@ -209,7 +212,7 @@ public class DeveloperTest {
        if(repoResponsePush != null){
 //
                boolean isUrlTrue = repoResponsePush.getContent().getHtml_url()
-               .equals("https://github.com/zanio/semicolon-devop-backend/blob/master/config/.travis.yml");
+               .equals("https://github.com/zanio/auth-app/blob/master/Jenkinsfile");
 
                       assertThat(isUrlTrue).isEqualTo(true);
 

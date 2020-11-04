@@ -15,5 +15,5 @@ import lombok.ToString;
 public class WebhookResponse {
     private Integer id;
     private String type;
-    private GithubWebhookPayload githubWebhookPayload;
+    private GithubWebhookPayload config;
 }

@@ -1,6 +1,7 @@
 package com.semicolondevop.suite.service.jenkins;
 
 import com.cdancy.jenkins.rest.JenkinsClient;
+import com.cdancy.jenkins.rest.domain.common.IntegerResponse;
 import com.cdancy.jenkins.rest.domain.common.RequestStatus;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.semicolondevop.suite.dao.AccessTokenResponse;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author with Username zanio and fullname Aniefiok Akpan
@@ -76,7 +78,8 @@ public class JenkinsServiceImpl extends BasicConfig {
     @Autowired
     private JenkinsCredentialRepository jenkinsCredentialRepositoryImpl;
 
-    public void setUpAppForJenkinsCI(Repository repository) {
+    public RepoResponsePush setUpAppForJenkinsCI(Repository repository) {
+        RepoResponsePush repoResponsePush = null;
         Map<String, String> stringMap = new HashMap<>();
         stringMap.put("Pizzly-Auth-Id", authId);
         stringMap.put("Content-Type", "application/json");
@@ -89,6 +92,7 @@ public class JenkinsServiceImpl extends BasicConfig {
             ResponseEntity<AccessTokenResponse> accessTokenResponse =
                     httpConnection
                             .getService("api/github/authentications/" + authId, null);
+
             String accessToken = accessTokenResponse.getBody().getPayload().getAccessToken();
 
             repository.getApp().getDeveloper().setAccessToken(accessToken);
@@ -158,35 +162,54 @@ public class JenkinsServiceImpl extends BasicConfig {
 
             String config = payloadFromResource("/jenkins/jobs/jenkins-pipeline.xml");
             log.info("THE CONFIG {}", config);
-            String output = client.api().jobsApi().config(null, developer.getUsername());
-            if (output == null) {
+            String isFolderAlreadyPresent = client.api().jobsApi().config(null, developer.getUsername());
+            if (isFolderAlreadyPresent == null) {
+//                If no folder matching that username, then we want to create a folder with the developer username
                 String configs = payloadFromResource("/jenkins/folder-config.xml");
-                RequestStatus success1 = client.api().jobsApi().create(null, developer.getUsername(), configs);
-                if(success1.value()){
-                    int size = client.api().jobsApi().jobList(developer.getUsername()).jobs().size() + 1;
-
-                    RequestStatus success = client.api().jobsApi().create(developer.getUsername(),
-                            new RandomString(12).nextString(size + "-"
-                                    + repository.getApp().getDeveloper().getUsername()
-                                    + "-" + repository.getApp().getName()), config);
-
-                    log.info("THE JOB WAS SUCCESSFULLY CREATED {}", success);
-                    if (success.value()) {
-                        String webhookUrlValue = "/repos/" + repository.getFullName() + "/hooks";
-                        WebhookResponse webhookResponse =
-                                githubService.createGithubWebHook(authId, webhookUrlValue, jenkinsUrl + "/github-webhook/");
-                        log.info("THE WEBHOOK WAS CREATED SUCCESSFULLY {}", webhookResponse);
-                        RepoResponsePush repoResponsePush = githubService
-                                .pushToGithub("config/backend/Jenkinsfile",
-                                        repository.getFullName(),
-                                        "Jenkinsfile", authId);
-                        log.info("THE REPO RESPONSE IS AS FOLLOW {}", repoResponsePush);
-
-                    }
-                }
-
+                client.api().jobsApi().create(null, developer.getUsername(), configs);
             }
 
+//                if(createJenkinsFolder.value()){
+//                    Get the number of created jobs in that folder
+            int size = client.api().jobsApi().jobList(developer.getUsername()).jobs().size() + 1;
+// Create a new job that is under that folder belonging to that user
+            String appNameOnJenkins =   new RandomString(12).nextString(size + "-"
+                    + repository.getApp().getDeveloper().getUsername()
+                    + "-" + repository.getApp().getName());
+            RequestStatus success = client.api().jobsApi().create(developer.getUsername(),appNameOnJenkins
+                  , config);
+
+            log.info("THE JOB WAS SUCCESSFULLY CREATED {}", success);
+//                    If job was created successfully then we want to create webhooks for that particular job
+            if (success.value()) {
+                IntegerResponse queueId = client.api().jobsApi().build(developer.getUsername(),appNameOnJenkins);
+                String webhookUrlValue = "repos/" + repository.getFullName() + "/hooks";
+                List<WebhookResponse> webhookResponseList = githubService.githubWebHooks(authId, webhookUrlValue);
+                if (webhookResponseList.size() > 0) {
+
+                    webhookResponseList.stream()
+                            .filter(e -> e.getConfig().getUrl().equals(jenkinsUrl + "github-webhook/"))
+                            .forEach(e -> {
+                                log.info("THE WEBHOOKS ID {} AND THE URL IS {}", e.getId(), e.getConfig().getUrl());
+                                githubService.deleteRepositoryWebHookById(authId, webhookUrlValue + "/" + e.getId());
+                            });
+                }
+                WebhookResponse webhookResponse =
+                        githubService.createGithubWebHook(authId, webhookUrlValue, jenkinsUrl + "github-webhook/");
+
+                if (webhookResponse != null) {
+                    log.info("THE WEBHOOK WAS CREATED SUCCESSFULLY {}", webhookResponse);
+
+                    repoResponsePush = githubService
+                            .pushToGithub("config/heroku/java/Jenkinsfile",
+                                    repository.getFullName(),
+                                    "Jenkinsfile", authId);
+                    log.info("THE REPO RESPONSE IS AS FOLLOW {}", repoResponsePush);
+                }
+
+
+            }
+//                }
 
         } catch (MyRestTemplateException e) {
             log.info("MyResTemplateException Error {}", e.getError());
@@ -194,6 +217,8 @@ public class JenkinsServiceImpl extends BasicConfig {
         } catch (IOException | ParserConfigurationException | SAXException | TransformerException e) {
             e.printStackTrace();
         }
+        return repoResponsePush;
+
 
     }
 }

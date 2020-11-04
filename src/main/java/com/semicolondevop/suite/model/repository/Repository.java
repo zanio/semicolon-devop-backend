@@ -37,8 +37,12 @@ public class Repository {
 
     private String repoLink;
 
+    @ApiModelProperty(hidden = true)
     @CreationTimestamp
     private Date dateCreated;
+
+    @ApiModelProperty(hidden = true)
+    private Boolean isRepoLinkedToJenkins;
 
     @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn()
@@ -49,6 +53,7 @@ public class Repository {
         this.fullName = repository.getFullName();
         this.repoLink = repository.getRepoLink();
         this.app = app;
+        this.isRepoLinkedToJenkins = false;
 
         innerFieldAttachment(app);
     }
@@ -56,6 +61,7 @@ public class Repository {
         this.app = app;
 
         innerFieldAttachment(app);
+        this.isRepoLinkedToJenkins = false;
     }
 
     private void innerFieldAttachment(App app) {

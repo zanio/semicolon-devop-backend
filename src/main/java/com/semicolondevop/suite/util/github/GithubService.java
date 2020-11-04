@@ -1,5 +1,7 @@
 package com.semicolondevop.suite.util.github;
 
+import com.semicolondevop.suite.dao.GithubRepoContentListFiles;
+import com.semicolondevop.suite.dao.GithubRepoFiles;
 import com.semicolondevop.suite.dao.webhook.GithubWebhookConfiguration;
 import com.semicolondevop.suite.dao.webhook.GithubWebhookPayload;
 import com.semicolondevop.suite.dao.webhook.WebhookResponse;
@@ -14,10 +16,8 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author with Username zanio and fullname Aniefiok Akpan
@@ -45,32 +45,61 @@ public final class GithubService {
         ResponseEntity<RepoResponsePush> response1 = null;
         RepoResponsePush repoResponsePush = null;
 
-        GithubRestTemplate<RepoResponsePush, DataUpdateRepoPush> pushGithubRestTemplate = new GithubRestTemplate<>(authId, RepoResponsePush.class);
+        GithubRestTemplate<RepoResponsePush, DataUpdateRepoPush> pushGithubRestTemplate =
+                new GithubRestTemplate<>(authId, RepoResponsePush.class);
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource(pathToFileInResourceFolder).getFile());
         if (file.exists()) {
             GithubRestTemplate<PushToGithubResponse, RepoResponsePush>
-                    githubResponsePushToGithubDaoGithubRestTemplate = new GithubRestTemplate<>(authId, PushToGithubResponse.class);
+                    githubResponsePushToGithubDaoGithubRestTemplate =
+                    new GithubRestTemplate<>(authId, PushToGithubResponse.class);
             try {
 
                 String query = "ref=master";
-                response = githubResponsePushToGithubDaoGithubRestTemplate.getService(link, query);
-                log.info("The response {}", response.getBody());
-                String x1d = GithubContentProcess.decoder(response.getBody().getContent());
-                String x2d = GithubContentProcess.decoder(GithubContentProcess.encoder(file));
-//                If there is changes on github that means we want to push an update to the same repo path
-                if (!x1d.equals(x2d)) {
-                    log.info("PUSHING UPDATE TO GITHUB");
-                    DataUpdateRepoPush pushToGithubDao = new DataUpdateRepoPush(GithubContentProcess.encoder(file),
-                            "master", "update the repo", response.getBody().getSha());
-                    response1 = pushGithubRestTemplate.putService(link, pushToGithubDao);
+                GithubService githubService = new GithubService();
+                String treeUrl = String.format("repos/%s/%s/git/trees/master", "zanio", "auth-app");
+                GithubRepoFiles githubRepoFiles = githubService.getAllFilesOnGithubRepository(authId, treeUrl, null);
+                log.info("THE githubRepoFiles is {}", githubRepoFiles);
+                if (githubRepoFiles != null && !githubRepoFiles.getTree().isEmpty()) {
+                    Set<GithubRepoContentListFiles> githubRepoContentListFilesSet =
+                            githubRepoFiles.getTree()
+                                    .stream()
+                                    .filter(e -> e.getPath().equals(pathToRemoteFile))
+                                    .collect(Collectors.toSet());
+                    GithubRepoContentListFiles githubRepoContentListFiles = githubRepoContentListFilesSet
+                            .stream().findFirst().orElse(null);
+                    if (githubRepoContentListFiles == null) {
+                        log.info("PUSHING NEW FILE TO GITHUB BECAUSE THE FILE DOES NOT EXIST IN THE REPOSITORY");
+                        DataUpdateRepoPush pushToGithubDao = new DataUpdateRepoPush(GithubContentProcess.encoder(file),
+                                "master", String.format("chore(%s) add %s file to the repo for " +
+                                        "continuous integration and continuous deployment",
+                                pathToRemoteFile, pathToRemoteFile));
+                        response1 = pushGithubRestTemplate.putService(link, pushToGithubDao);
 //                    response.ge
-                    repoResponsePush = response1.getBody();
-                } else {
+                        repoResponsePush = response1.getBody();
+                    } else {
+                        log.info("UPDATING FILE ON GITHUB BECAUSE FILE EXIST ALREADY ON GITHUB " +
+                                "FILE TO GITHUB IN THE REPOSITORY" +
+                                " {}", githubRepoContentListFiles);
+                        response = githubResponsePushToGithubDaoGithubRestTemplate.getService(link, query);
+                        log.info("The response {}", response != null ? response.getBody() : "NOTHING TO DISPLAY");
+                        String x1d = GithubContentProcess.decoder(response.getBody().getContent());
+                        String x2d = GithubContentProcess.decoder(GithubContentProcess.encoder(file));
+//                If there is changes on github that means we want to push an update to the same repo path
+                        if (!x1d.equals(x2d)) {
+                            log.info("PUSHING UPDATE TO GITHUB");
+                            DataUpdateRepoPush pushToGithubDao = new DataUpdateRepoPush(GithubContentProcess.encoder(file),
+                                    "master", "update the repo", response.getBody().getSha());
+                            response1 = pushGithubRestTemplate.putService(link, pushToGithubDao);
+//                    response.ge
+                            repoResponsePush = response1.getBody();
+                        } else {
 
 //                    else we want to push a new file path to the repo
-                    log.info("NO UPDATE TO PUSH TO GITHUB");
+                            log.info("NO UPDATE TO PUSH TO GITHUB");
 
+                        }
+                    }
                 }
 
             } catch (Exception io) {
@@ -105,6 +134,21 @@ public final class GithubService {
 
         }
         return githubDeveloperDao;
+    }
+
+    public GithubRepoFiles getAllFilesOnGithubRepository(String authId, String context, String query) {
+        GithubRepoFiles githubRepoFiles = null;
+        try {
+            GithubRestTemplate<GithubRepoFiles, String>
+                    githubRestTemplate
+                    = new GithubRestTemplate<>(authId, GithubRepoFiles.class);
+
+            githubRepoFiles = githubRestTemplate.getService(context, query).getBody();
+        } catch (Exception e) {
+            log.error("ERROR OCCURRED IN THE getAllFilesOnGithubRepository {}", e.getCause().getLocalizedMessage());
+
+        }
+        return githubRepoFiles;
     }
 
     /**
@@ -229,7 +273,6 @@ public final class GithubService {
     }
 
     /**
-     *
      * @param authId
      * @param context
      * @return
@@ -241,8 +284,10 @@ public final class GithubService {
                     githubRestTemplate
                     = new GithubRestTemplate<>(authId, WebhookResponse[].class);
             WebhookResponse[] githubRepoResponseDaos = githubRestTemplate.getService(context, null).getBody();
+            log.info("THE githubRepoResponseDaos{}", githubRepoResponseDaos.length);
             if (githubRepoResponseDaos != null && githubRepoResponseDaos.length > 0) {
                 responseDaoList = Arrays.asList(Objects.requireNonNull(githubRepoResponseDaos));
+                log.info("THE responseDaoList{}", responseDaoList);
 
             }
         } catch (Exception e) {
@@ -258,10 +303,11 @@ public final class GithubService {
                     githubRestTemplate
                     = new GithubRestTemplate<>(authId, String.class);
 
-           githubRestTemplate.delete(context, null);
+            githubRestTemplate.delete(context, null);
         } catch (Exception e) {
             log.error("ERROR OCCURRED IN THE getGitUserRepository {}", e.getCause().getLocalizedMessage());
         }
     }
+
 
 }

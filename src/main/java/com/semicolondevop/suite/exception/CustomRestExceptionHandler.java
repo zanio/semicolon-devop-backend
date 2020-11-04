@@ -144,10 +144,10 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({Exception.class})
     public org.springframework.http.ResponseEntity handleAll(Exception ex, WebRequest request){
 
-        log.error("Exception throwable value {}", ex.getCause().fillInStackTrace());
+        log.error("Exception throwable value {}",ex);
         ResponseApi responseApi =
-                new ResponseApi(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), ex.getCause().fillInStackTrace().getCause().getCause().getMessage(),
-                        ex.getCause().fillInStackTrace().getCause().getCause()
+                new ResponseApi(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(),
+                        ex.getMessage()
                        );
 
         return new org.springframework.http.ResponseEntity(
