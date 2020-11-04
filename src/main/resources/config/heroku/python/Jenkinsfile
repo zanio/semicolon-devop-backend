@@ -1,24 +1,74 @@
 node{
     stage('Git CheckOut'){
+        echo 'BRANCH NAME: ' + env.BRANCH_NAME
         git credentialsId: 'github', url: 'https://github.com/Maduflavins/mjt.git'
 
     }
+
     stage('Build Project'){
         sh 'pip3 install -r requirements.txt'
     }
-
-    stage('Test'){
+    stage('Test Project'){
         sh 'python3 manage.py test'
     }
-    stage('Deploy Heroku'){
-        withCredentials([usernamePassword(credentialsId: 'herokuAuth', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-    // some block
-  sh  '''(
-    $Email
-    $Password
-) | heroku login'''
-
-    // sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@git.heroku.com/project-devop.git')
-}
+    stage('build Docker'){
+        sh 'docker build -t pivotal .'
     }
+
+    stage('Publish to Heroku'){
+        withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-token', vaultUrl: 'http://67.205.152.207:8200'], vaultSecrets: [[path: 'heroku/herokulogin', secretValues: [[envVar: 'Username', vaultKey: 'HEROKU_USERNAME'], [envVar: 'Password', vaultKey: 'HEROKU_TOKEN']]]]) {
+    sh 'docker login --username $HEROKU_DOCKER_USERNAME --password $HEROKU_TOKEN registry.heroku.com'
+}
+    if(${BRANCH_NAME} == 'staging'){
+          sh 'docker tag pivotal:latest registry.heroku.com/${HEROKU_APP}/web'
+          sh 'docker push registry.heroku.com/${HEROKU_APP}/web'
+          withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-token', vaultUrl: 'http://67.205.152.207:8200'], vaultSecrets: [[path: 'heroku/herokulogin', secretValues: [[envVar: 'Username', vaultKey: 'HEROKU_USERNAME'], [envVar: 'Password', vaultKey: 'HEROKU_TOKEN']]]]) {
+             sh '''
+        #!/bin/bash
+        imageId=$(docker inspect registry.heroku.com/${HEROKU_APP}/web --format={{.Id}})
+        payload='{"updates":[{"type":"web","docker_image":"'"$imageId"'"}]}'
+        curl -n -X PATCH https://api.heroku.com/apps/${HEROKU_APP}/formation \
+        -d "$payload" \
+        -H "Content-Type: application/json" \
+        -H "Accept: application/vnd.heroku+json; version=3.docker-releases" \
+        -H "Authorization: Bearer $HEROKU_TOKEN"
+       '''
+    }
+
+    }
+    if(${BRANCH_NAME} == 'master' || ${BRANCH_NAME} == 'main'){
+        sh 'docker tag pivotal:latest registry.heroku.com/${HEROKU_APP}/web'
+          sh 'docker push registry.heroku.com/${HEROKU_APP}/web'
+          withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-token', vaultUrl: 'http://67.205.152.207:8200'], vaultSecrets: [[path: 'heroku/herokulogin', secretValues: [[envVar: 'Username', vaultKey: 'HEROKU_USERNAME'], [envVar: 'Password', vaultKey: 'HEROKU_TOKEN']]]]) {
+             sh '''
+        #!/bin/bash
+        imageId=$(docker inspect registry.heroku.com/${HEROKU_APP}/web --format={{.Id}})
+        payload='{"updates":[{"type":"web","docker_image":"'"$imageId"'"}]}'
+        curl -n -X PATCH https://api.heroku.com/apps/${HEROKU_APP}/formation \
+        -d "$payload" \
+        -H "Content-Type: application/json" \
+        -H "Accept: application/vnd.heroku+json; version=3.docker-releases" \
+        -H "Authorization: Bearer $HEROKU_TOKEN"
+       '''
+        }
+    }
+
+    }
+    post {
+    // Always runs. And it runs before any of the other post conditions.
+    always {
+      // Let's wipe out the workspace before we finish!
+      deleteDir()
+    }
+
+    success{
+        mail bcc: 'devopsteam@gmail.com', body: 'the build was a sucessfulone', cc: 'teamlead@mail.com', from: '', replyTo: '', subject: 'success', to: 'culprit@mail.com'
+
+    }
+    failure{
+        mail bcc: 'devopsteam@gmail.com', body: 'the build failed please take a look to see what happened', cc: 'teamlead@mail.com', from: '', replyTo: '', subject: 'failure', to: 'culprit@mail.com'
+    }
+
+    }
+
 }
