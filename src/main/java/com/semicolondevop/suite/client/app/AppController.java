@@ -1,9 +1,11 @@
 package com.semicolondevop.suite.client.app;
 
+import com.semicolondevop.suite.client.genericresponse.ResponseApi;
 import com.semicolondevop.suite.model.app.App;
 import com.semicolondevop.suite.model.developer.Developer;
 import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
 import com.semicolondevop.suite.model.repository.Repository;
+import com.semicolondevop.suite.model.repository.dao.post.RepoResponsePush;
 import com.semicolondevop.suite.repository.github.GithubRepository;
 import com.semicolondevop.suite.service.app.AppService;
 import com.semicolondevop.suite.service.jenkins.JenkinsServiceImpl;
@@ -17,7 +19,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -65,6 +69,7 @@ public class AppController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(response);
     }
+
     @GetMapping("/setup")
     @ApiOperation(value = "Set up Jenkins Ci/Cd", notes = "It configure jenkins ci/cd for automation of github repository")
     @ApiResponses({
@@ -72,12 +77,28 @@ public class AppController {
             @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request", response = ResponseEntity.class)
     })
     public ResponseEntity<?> setUpApp(@ApiParam(required = true, name = "id",
-            value = "ID of the repository") @RequestParam("id") Integer id) {
+            value = "ID of the repository") @RequestParam("id") Integer id, @ApiParam(hidden = true) WebRequest request) {
         Repository repository = githubRepositoryImpl.findById(id).get();
-        //            JenkinsServiceImpl
-        jenkinsServiceImpl.setUpAppForJenkinsCI(repository);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(repository);
+        if(repository == null){
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseApi(HttpStatus.BAD_REQUEST,"The repository was not found"));
+        }
+        if(!repository.getIsRepoLinkedToJenkins() || repository.getIsRepoLinkedToJenkins() == null){
+            RepoResponsePush repoResponsePush =jenkinsServiceImpl.setUpAppForJenkinsCI(repository);
+            log.info("After the jenkinsServiceImpl method is called");
+            repository.setIsRepoLinkedToJenkins(true);
+            Repository repository1 = githubRepositoryImpl.save(repository);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(repository1);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body((new ResponseApi(HttpStatus.BAD_REQUEST,"Application already linked to DS-suite CI/CD")));
+        }
+
 
     }
 

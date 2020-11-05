@@ -17,6 +17,8 @@ import java.util.List;
 @Setter
 public class GithubWebhookPayload {
     private String name;
+    private String content_type;
+    private String url;
     private Boolean active;
     private List<String> events;
 

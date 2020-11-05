@@ -1,9 +1,6 @@
 package com.semicolondevop.suite.model.developer;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * @author with Username zanio and fullname Aniefiok Akpan
@@ -14,6 +11,7 @@ import lombok.ToString;
 @Setter
 @AllArgsConstructor
 @ToString
+@NoArgsConstructor
 public class DeveloperLoginDto {
     private String username;
     private String password;

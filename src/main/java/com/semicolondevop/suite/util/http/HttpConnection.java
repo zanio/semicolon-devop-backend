@@ -71,6 +71,7 @@ public final class HttpConnection<T, R> {
         response = restTemplate.exchange(getConnectionUrl() + buildContext,
                 HttpMethod.GET, entity, tType);
 
+
         return response;
     }
 

@@ -49,19 +49,14 @@ public class GithubRestTemplate<T, R> {
     public ResponseEntity<T> getService(@NotNull String context, String query) throws Exception {
         HttpEntity<R> entity = new HttpEntity<>(null, headers);
         ResponseEntity<T> response = null;
-        try {
             String queryConcate = "?"+query;
             String buildContext = query != null?context+queryConcate:context;
             log.info("THE TYPE OF CLASS {} and the complete path {}",tType,buildContext);
-            log.info("the entity {} {}",entity,getGithubRootUrl()+context+queryConcate);
-            response = restTemplate.exchange(getGithubRootUrl() + context + queryConcate,
+            log.info("the entity {} {}",entity,getGithubRootUrl()+buildContext);
+            response = restTemplate.exchange(getGithubRootUrl() + buildContext,
                     HttpMethod.GET, entity, tType);
             log.info("THE RESPONSE IS AS FOLLOW");
 
-        } catch (Exception e){
-            log.error("THE ERROR OCCURRED DURING GET AND THE CAUSE OF THE ERROR IS: {}", e.getCause().getLocalizedMessage());
-            throw new Exception(e.getCause());
-        }
 
         return response;
     }

@@ -16,6 +16,7 @@ import java.util.List;
  */
 
 @Service
+
 public class ActivityServiceImpl implements ActivityService {
     private final ActivityRepository activityRepo;
 

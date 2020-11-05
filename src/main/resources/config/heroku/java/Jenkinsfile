@@ -1,9 +1,4 @@
 node{
-    stage('Git CheckOut'){
-        echo 'cloning the repo'
-        git 'https://github.com/Maduflavins/java-devops.git'
-
-    }
     stage("Build Artifact"){
         echo 'running the major maven commands'
         def MAVEN_HOME = tool name: 'maven', type: 'maven'
@@ -13,7 +8,7 @@ node{
     }
     stage("Docker Build"){
         echo 'building images'
-        sh "docker build -t maduflavins/pivotaldevops ."
+        sh "docker build -t zanio/spring-boot-example ."
     }
     stage("Docker Push"){
         echo 'pushing to dockerhub'

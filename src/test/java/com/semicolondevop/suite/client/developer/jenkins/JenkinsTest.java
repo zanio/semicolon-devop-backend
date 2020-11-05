@@ -1,6 +1,7 @@
 package com.semicolondevop.suite.client.developer.jenkins;
 
 import com.cdancy.jenkins.rest.JenkinsClient;
+import com.cdancy.jenkins.rest.domain.common.IntegerResponse;
 import com.cdancy.jenkins.rest.domain.common.RequestStatus;
 import com.cdancy.jenkins.rest.domain.job.JobList;
 import com.cdancy.jenkins.rest.domain.system.SystemInfo;
@@ -34,9 +35,13 @@ import org.springframework.util.MultiValueMap;
 
 import javax.transaction.Transactional;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -200,10 +205,15 @@ public class JenkinsTest extends BasicConfig {
             log.info("THE CONFIG {}", config);
             int size = client.api().jobsApi().jobList("test").jobs().size()+1;
 
-            RequestStatus success = client.api().jobsApi().create("test",
-                    new RandomString(12).nextString(size+"-"
-                            +repository.getApp().getDeveloper().getUsername()+"-"+repository.getApp().getName()), config);
+            String jobName =   new RandomString(12).nextString(size+"-"
+                    +repository.getApp().getDeveloper().getUsername()+"-"+repository.getApp().getName());
+// Create the job
+            RequestStatus success = client.api().jobsApi().create("test",jobName
+                  , config);
             log.info("THE JOB WAS SUCCESSFULLY CREATED {}",success);
+//            Start the build
+             IntegerResponse queueId = client.api().jobsApi().build("test",jobName);
+             assertThat(queueId).isNotNull();
 
         } catch (MyRestTemplateException e){
             log.info("The error object {}", e.getError());
@@ -229,16 +239,26 @@ public class JenkinsTest extends BasicConfig {
         Repository repository = githubRepositoryImpl.findById(1).orElseThrow(()->new Exception("Id not find"));
         GithubService githubService = new GithubService();
         String webhookUrlValue = "/repos/" + repository.getFullName() + "/hooks";
-        List<WebhookResponse> webhookResponseList = githubService.githubWebHooks(authId,webhookUrlValue);
-        WebhookResponse webhookResponse = webhookResponseList.stream().findFirst().get();
-        if(webhookResponse != null){
-            Integer integer = webhookResponseList.stream().findFirst().get().getId();
-            githubService.deleteRepositoryWebHookById(authId,webhookUrlValue+"/"+integer);
-        }
 
-        WebhookResponse webhookResponseCreateHooks =
+
+        List<WebhookResponse> webhookResponseList = githubService.githubWebHooks(authId,webhookUrlValue);
+        if(webhookResponseList.size()>0){
+
+         webhookResponseList.stream()
+                    .filter(e-> e.getConfig().getUrl().equals(jenkinsUrl + "github-webhook/"))
+                    .forEach(e->{
+                        log.info("THE WEBHOOKS ID {} and the url is {}", e.getId(),e.getConfig().getUrl());
+                        githubService.deleteRepositoryWebHookById(authId,webhookUrlValue+"/"+e.getId());
+                    });
+        }
+        WebhookResponse webhookResponse =
                 githubService.createGithubWebHook(authId, webhookUrlValue, jenkinsUrl + "github-webhook/");
+
+
         log.info("THE WEBHOOK WAS CREATED SUCCESSFULLY {}", webhookResponse);
+
+
+
     }
 
 

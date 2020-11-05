@@ -20,11 +20,21 @@ public class ResponseApi {
     private String message;
     private List<String> errors;
 
+    private Throwable throwable;
+
     public ResponseApi(HttpStatus status, String message, List<String> errors) {
         super();
         this.status = status;
         this.message = message;
         this.errors = errors;
+    }
+
+    public ResponseApi(HttpStatus status, String message, String error, Throwable throwable) {
+        super();
+        this.status = status;
+        this.message = message;
+        errors = Arrays.asList(error);
+        this.throwable = throwable;
     }
 
     public ResponseApi(HttpStatus status, String message, String error) {

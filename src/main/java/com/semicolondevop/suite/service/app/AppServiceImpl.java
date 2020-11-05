@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 /**
  * @author with Username zanio and fullname Aniefiok Akpan
  * @created 13/10/2020 - 8:08 AM
@@ -51,23 +53,27 @@ public class AppServiceImpl implements AppService {
     public App add(App app, String lang) {
         String username = securityContextUser();
         Developer developer = developerRepositoryImpl.findByEmail(username);
+        App response = null;
         if(developer == null){
             throw new UsernameNotFoundException("THE USER WAS NOT FOUND");
         }
-        App app1 = new App(app);
+        App appNew = new App(app);
         TechStack techStack = new TechStack(lang);
 
-        app1.setDeveloper(developer);
+        appNew.setDeveloper(developer);
+        log.info("THE APP DEVELOPER {}",appNew);
         try{
+            log.info("THE TECKSTACK {}",techStack);
+
             TechStack techStack1 = techStackRepositoryImpl.save(techStack);
-            app1.setTechStack(techStack1);
-            app1 =  appRepositoryImpl.save(app1);
+
+            appNew.setTechStack(techStack1);
+            response =  appRepositoryImpl.save(appNew);
         }
         catch (Exception e){
-            log.error("An error occured {}",e.getCause().getLocalizedMessage());
             throw e;
         }
-        return app1;
+        return response;
     }
 
     private String securityContextUser(){

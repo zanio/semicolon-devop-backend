@@ -18,5 +18,11 @@ public class DataUpdateRepoPush {
     private String branch;
     private String message;
     private String sha;
+
+    public DataUpdateRepoPush(String content, String branch, String message) {
+        this.content = content;
+        this.branch = branch;
+        this.message = message;
+    }
 }
 
