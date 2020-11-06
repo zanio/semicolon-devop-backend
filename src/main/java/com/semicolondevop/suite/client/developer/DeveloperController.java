@@ -6,19 +6,16 @@ package com.semicolondevop.suite.client.developer;
  */
 
 
-import com.semicolondevop.suite.client.event.OnRegistrationCompleteEvent;
-import com.semicolondevop.suite.client.exception.UserAlreadyExistException;
+import com.semicolondevop.suite.exception.UserAlreadyExistException;
 import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
 import com.semicolondevop.suite.service.cloudinary.CloudinaryService;
 import com.semicolondevop.suite.service.json.JsonObject;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.semicolondevop.suite.client.authenticationcontext.IAuthenticationFacade;
 import com.semicolondevop.suite.client.dto.DeveloperDto;
-import com.semicolondevop.suite.client.exception.ResourceNotFound;
+import com.semicolondevop.suite.exception.ResourceNotFound;
 import com.semicolondevop.suite.client.genericresponse.ResponseApi;
 import com.semicolondevop.suite.model.developer.Developer;
 import com.semicolondevop.suite.service.developer.DeveloperService;
-import com.semicolondevop.suite.service.json.JsonObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -30,6 +27,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -212,6 +210,8 @@ public class DeveloperController {
                 .body(entityModel);
     }
 
+
+
     /**
      * @param request
      * @param token
@@ -246,11 +246,12 @@ public class DeveloperController {
 
         log.info("updating user details in the database");
         //update
-        developerServiceImpl.update(savedUser);
+        Developer developer = developerServiceImpl.update(savedUser);
 
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("user activated successfully");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(developer);
     }
 
 

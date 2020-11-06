@@ -7,8 +7,8 @@ package com.semicolondevop.suite.client.admin;
 
 import com.semicolondevop.suite.client.authenticationcontext.IAuthenticationFacade;
 import com.semicolondevop.suite.client.event.OnAdminRegisterationEvent;
-import com.semicolondevop.suite.client.exception.ResourceNotFound;
-import com.semicolondevop.suite.client.exception.UserAlreadyExistException;
+import com.semicolondevop.suite.exception.ResourceNotFound;
+import com.semicolondevop.suite.exception.UserAlreadyExistException;
 import com.semicolondevop.suite.client.genericresponse.ResponseApi;
 import com.semicolondevop.suite.model.admin.Admin;
 import com.semicolondevop.suite.model.developer.Developer;

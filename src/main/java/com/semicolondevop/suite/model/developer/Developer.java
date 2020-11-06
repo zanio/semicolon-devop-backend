@@ -1,10 +1,13 @@
 package com.semicolondevop.suite.model.developer;
+
 /*
  *@author Aniefiok akpan
  * created on 05/05/2020
  *
  */
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.semicolondevop.suite.model.activity.Activity;
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
@@ -58,7 +61,12 @@ public class Developer {
 
     @ApiModelProperty(hidden = true)
     @ToString.Exclude
+    @Column(unique = true,length = 300)
     private String authId;
+
+    @ApiModelProperty(hidden = true)
+    @Column(unique = true,length = 300)
+    private String accessToken;
 
     @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn()
@@ -66,6 +74,11 @@ public class Developer {
     @JsonIgnore
     @ToString.Exclude
     private ApplicationUser applicationUser;
+
+    @OneToOne
+    @JsonManagedReference
+    @ApiModelProperty(hidden = true)
+    private Activity activity;
 
 
     public Developer(@NotNull Developer developer) {

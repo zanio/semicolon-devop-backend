@@ -7,6 +7,8 @@ package com.semicolondevop.suite.service.developer;
 
 
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
+import com.semicolondevop.suite.model.applicationUser.UserActivityLogs;
+import com.semicolondevop.suite.repository.user.UserLogsRepository;
 import com.semicolondevop.suite.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.DateFormatter;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Service("userdetails")
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -32,6 +39,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Value("${application.role}")
     private String role;
 
+    @Autowired
+    private UserLogsRepository userLogsRepository;
+
+    private Date date;
+
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -43,12 +55,30 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         log.info("SEARCHING THE DB FOR USER BY USERNAME '{}'", username);
         ApplicationUser applicationUser = applicationUserRepository.findByUsername(username);
+       UserActivityLogs userActivityLogs = userLogsRepository.findByApplicationUser(applicationUser);
 
 
         if(applicationUser == null || !applicationUser.isActive())
             throw new UsernameNotFoundException(String.format("APPLICATION USER'%s' NOT FOUND", username));
         User user = null;
+        if(userActivityLogs == null){
+            userActivityLogs = new UserActivityLogs();
+            userActivityLogs.setApplicationUser(applicationUser);
+            long today =  System.currentTimeMillis();
+            Timestamp ts=new Timestamp(today);
+            Date date=new Date(ts.getTime());
+            userActivityLogs.setLastLoginDate(date);
+            userLogsRepository.save(userActivityLogs);
+        } else {
+            long today =  System.currentTimeMillis();
+            Timestamp ts=new Timestamp(today);
+            Date date=new Date(ts.getTime());
+            userActivityLogs.setLastLoginDate(date);
+            userLogsRepository.save(userActivityLogs);
+        }
 
+        applicationUser.setUserActivityLogs(userActivityLogs);
+        applicationUserRepository.save(applicationUser);
 //
         if(applicationUser.getRole().equals(role)){
 

@@ -1,14 +1,19 @@
 package com.semicolondevop.suite.client.developer;
 
 
+import com.cdancy.jenkins.rest.JenkinsClient;
+import com.semicolondevop.suite.dao.GithubRepoContentListFiles;
+import com.semicolondevop.suite.dao.GithubRepoFiles;
+import com.semicolondevop.suite.dao.webhook.WebhookResponse;
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;
 import com.semicolondevop.suite.model.developer.*;
 import com.semicolondevop.suite.model.repository.dao.get.GithubRepoResponseDao;
-import com.semicolondevop.suite.model.repository.dao.get.ListOfRepository;
 import com.semicolondevop.suite.model.repository.dao.post.RepoResponsePush;
 import com.semicolondevop.suite.repository.developer.DeveloperRepository;
+import com.semicolondevop.suite.repository.github.GithubRepository;
 import com.semicolondevop.suite.repository.user.UserRepository;
-import com.semicolondevop.suite.util.GithubService;
+import com.semicolondevop.suite.service.json.JsonObject;
+import com.semicolondevop.suite.util.github.GithubService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,20 +25,37 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import com.google.common.base.Throwables;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.jclouds.util.Strings2.toStringAndClose;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,properties = "spring.profiles.active=test")
 @Slf4j
+@Sql(scripts={"classpath:/db/development/developer.sql", "classpath:/db/development/github_repository.sql"})
+@ActiveProfiles("test")
+@Transactional
 public class DeveloperTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private JsonObject jsonObject;
 
     @LocalServerPort
     private int port;
@@ -41,11 +63,26 @@ public class DeveloperTest {
     @Value("${url.github}")
     private String githubUrl;
 
+    @Value("${github.auth.url}")
+    private String githubAuthUrl;
+
+    @Value("${jenkins.auth}")
+    private String jenkinsCredentials;
+
+    @Value("${jenkins.url}")
+    private String jenkinsUrl;
+
     @Value("${auth.id}")
     private String authId;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JenkinsClient client;
+
+    @Autowired
+    private GithubRepository githubRepositoryImpl;
 
     @Autowired
     private DeveloperRepository developerRepositoryImpl;
@@ -75,56 +112,49 @@ public class DeveloperTest {
         assertThat(getGithubRootUrl()).isNotNull();
     }
 
-//    @Test
-//    public void after_user_authenticate_With_github_then_getUserProfile_and_save_to_db() throws Exception {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-//        headers.add("Pizzly-Auth-Id", authId);
-//        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-//
-//        ResponseEntity<GithubDeveloperDao> response = null;
-//
-//        try {
-//            response = restTemplate.exchange(getGithubRootUrl() + "user",
-//                    HttpMethod.GET, entity, GithubDeveloperDao.class);
-//            if (Objects.requireNonNull(response.getBody()).getLogin() != null) {
-//                GithubDeveloperDao githubDeveloperDao = response.getBody();
-//                githubDeveloperDao.setPassword(passwordEncoder.encode("MasterCraft"));
-//                githubDeveloperDao.setPhoneNUmber("08167124344");
-//                githubDeveloperDao.setAuthId(authId);
-//                ApplicationUser applicationUser = new ApplicationUser(githubDeveloperDao);
-//                userRepositoryImpl.save(applicationUser);
-//                Developer developer = new Developer(githubDeveloperDao);
-//                developer.setApplicationUser(applicationUser);
-//                Developer developer1 = developerRepositoryImpl.save(developer);
-//                log.info("THE USER HAS BEEN SAVED IN THE DB: {}", developer1);
-//            }
-//        } catch (Exception e) {
-//            log.error("The cause of the error is {}", e.getCause().getLocalizedMessage());
-//            throw new Exception(e.getCause());
-//        }
-//
-//        log.info("The avartar url is {}", Objects.requireNonNull(response.getBody()).getAvatar_url());
-//
-//
-//        assertThat(response.getBody()).isNotNull();
-//        assertThat(response.getBody().getAvatar_url()).isEqualTo("https://avatars1.githubusercontent.com/u/38135488?v=4");
-//    }
+    @Test
+    public void after_user_authenticate_With_github_then_getUserProfile_and_save_to_db() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        headers.add("Pizzly-Auth-Id", authId);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+
+        ResponseEntity<GithubDeveloperDao> response = null;
+
+       if (developerRepositoryImpl.findByEmail("zanio")==null){
+           try {
+               response = restTemplate.exchange(getGithubRootUrl() + "user",
+                       HttpMethod.GET, entity, GithubDeveloperDao.class);
+               if (Objects.requireNonNull(response.getBody()).getLogin() != null) {
+                   GithubDeveloperDao githubDeveloperDao = response.getBody();
+                   githubDeveloperDao.setPassword(passwordEncoder.encode("MasterCraft"));
+                   githubDeveloperDao.setPhoneNUmber("08167124344");
+                   githubDeveloperDao.setAuthId(authId);
+                   ApplicationUser applicationUser = new ApplicationUser(githubDeveloperDao);
+                   userRepositoryImpl.save(applicationUser);
+                   Developer developer = new Developer(githubDeveloperDao);
+                   developer.setApplicationUser(applicationUser);
+                   Developer developer1 = developerRepositoryImpl.save(developer);
+                   log.info("THE USER HAS BEEN SAVED IN THE DB: {}", developer1);
+               }
+           } catch (Exception e) {
+               log.error("The cause of the error is {}", e.getCause().getLocalizedMessage());
+               throw new Exception(e.getCause());
+           }
+
+           log.info("The avartar url is {}", Objects.requireNonNull(response.getBody()).getAvatar_url());
 
 
-//    @Test
-//    public void it_should_login_user_to_the_application() {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-//
-//        DeveloperLoginDto developerLoginDto = new DeveloperLoginDto("zanio", "MasterCraft");
-//        HttpEntity<String> entity = new HttpEntity<String>(developerLoginDto.toString(), headers);
-//        log.info("The method tostring {}", entity);
-//
-//        ResponseEntity<String> response = null;
-//        response = restTemplate.exchange(getRootUrl() + "user",
-//                HttpMethod.GET, entity, String.class);
-//    }
+           assertThat(response.getBody()).isNotNull();
+           assertThat(response.getBody().getAvatar_url()).isEqualTo("https://avatars1.githubusercontent.com/u/38135488?v=4");
+       }else{
+           log.info("User already exist in the database");
+       }
+
+
+
+    }
+
 
     @Test
     public void it_should_create_repo_from_a_template() {
@@ -135,7 +165,7 @@ public class DeveloperTest {
         HttpEntity<String> entity = new HttpEntity<String>(name, headers);
 
         ResponseEntity<String> response = null;
-        response = restTemplate.exchange(getGithubRootUrl() + "repos/zanio/semicolon-devop-backend/generate",
+        response = restTemplate.exchange(getGithubRootUrl() + "repos/zanio/senicolon-devop-backend/generate",
                 HttpMethod.POST, entity, String.class);
 
         log.info("The response was successfully retrieved {}", response);
@@ -148,6 +178,7 @@ public class DeveloperTest {
         GithubService githubService = new GithubService();
         List<GithubRepoResponseDao>  listOfRepository = githubService.getGitUserRepositories(authId,"user/repos");
         log.info("THE REPO LIST {}",listOfRepository);
+
     }
 
     @Test
@@ -160,27 +191,20 @@ public class DeveloperTest {
 
     @Test
     void it_should_query_repo_based_on_oauth_scope_without_admin_access(){
-        // todo Maduflavins/Authentications
         GithubService githubService = new GithubService();
-        GithubRepoResponseDao  repository = githubService.getGitUserRepository(authId,"repos/Maduflavins/Authentications");
-        log.info("THE REPO LIST {}",repository);
+        GithubRepoResponseDao  repository = githubService
+                .getGitUserRepository(authId,"repos/Maduflavins/Authentications");
+        log.info("THE REPO DETAILS {}",repository);
     }
 
-    @Test
-    void it_should_query_repo_based_on_oauth_scope_with_admin_access(){
-        // todo Maduflavins/Authentications
-        GithubService githubService = new GithubService();
-        GithubRepoResponseDao  repository = githubService.getGitUserRepository(authId,"repos/tboydv1/springAlaajoBackend");
-        log.info("THE REPO LIST {}",repository);
-    }
 
     @Test
     void it_should_push_to_github() throws IOException {
         GithubService githubService = new GithubService();
         RepoResponsePush repoResponsePush = githubService
-                .pushToGithub(".travis.yml",
-                        "zanio/semicolon-devop-backend",
-                        "config/.travis.yml", authId);
+                .pushToGithub("config/heroku/java/Jenkinsfile",
+                        "zanio/auth-app",
+                        "Jenkinsfile", authId);
 
         log.info("THE RESPONSE FROM GITHUB {} ", repoResponsePush);
 
@@ -188,7 +212,7 @@ public class DeveloperTest {
        if(repoResponsePush != null){
 //
                boolean isUrlTrue = repoResponsePush.getContent().getHtml_url()
-               .equals("https://github.com/zanio/semicolon-devop-backend/blob/master/config/.travis.yml");
+               .equals("https://github.com/zanio/auth-app/blob/master/Jenkinsfile");
 
                       assertThat(isUrlTrue).isEqualTo(true);
 
@@ -197,5 +221,42 @@ public class DeveloperTest {
 
        }
     }
+
+    @Test
+    void it_should_get_the_date_difference_between_two_dates() throws ParseException {
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd MM yyyy");
+        String dateBeforeString = "31 01 2020";
+        String dateAfterString = "02 02 2020";
+        Date dateBefore = myFormat.parse(dateBeforeString);
+        Date dateAfter = myFormat.parse(dateAfterString);
+
+    }
+
+
+    @Test
+    public void it_should_login_user_to_the_application() {
+        HttpHeaders headers = new HttpHeaders();
+        final Map<String, String> parameterMap = new HashMap<String, String>(4);
+        parameterMap.put("charset", "utf-8");
+        headers.setContentType(new MediaType("application", "json",parameterMap));
+
+
+
+//        headers.setAccept(new MediaType("application", "json"));
+//        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+//        headers.add(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
+
+        DeveloperLoginDto developerLoginDto = new DeveloperLoginDto("Maduflavins", "Password1$");
+        HttpEntity<DeveloperLoginDto> entity = new HttpEntity<>(developerLoginDto, headers);
+        log.info("The method tostring {}", entity);
+//
+//        ResponseEntity<String> response = null;
+//        response = restTemplate.exchange(getRootUrl() + "/api/auth/login",
+//                HttpMethod.POST, entity, String.class);
+    }
+
+
+
+
 
 }

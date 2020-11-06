@@ -2,7 +2,7 @@ package com.semicolondevop.suite.client.passwordreset;
 
 
 import com.semicolondevop.suite.client.event.OnPasswordResetEvent;
-import com.semicolondevop.suite.client.exception.ResourceNotFound;
+import com.semicolondevop.suite.exception.ResourceNotFound;
 import com.semicolondevop.suite.client.genericresponse.ResponseApi;
 import com.semicolondevop.suite.model.admin.Admin;
 import com.semicolondevop.suite.model.applicationUser.ApplicationUser;

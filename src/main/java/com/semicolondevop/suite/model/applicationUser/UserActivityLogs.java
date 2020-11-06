@@ -5,7 +5,10 @@ package com.semicolondevop.suite.model.applicationUser;
  *
  */
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -15,6 +18,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "user_activity_log")
+@ToString
 public class UserActivityLogs {
 
     @Id
@@ -23,11 +27,12 @@ public class UserActivityLogs {
 
     @OneToOne
     @JoinColumn()
+    @JsonBackReference
     private ApplicationUser applicationUser;
 
     @CreationTimestamp
-    private Date lastLogin;
+    private Date creationDate;
 
-    @UpdateTimestamp
-    private Date transactionUpdate;
+
+    private Date lastLoginDate;
 }

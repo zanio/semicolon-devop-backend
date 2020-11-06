@@ -2,12 +2,11 @@ package com.semicolondevop.suite.service.developer;
 
 
 import com.semicolondevop.suite.client.dto.DeveloperDto;
-import com.semicolondevop.suite.client.exception.UserAlreadyExistException;
+import com.semicolondevop.suite.exception.UserAlreadyExistException;
 import com.semicolondevop.suite.model.developer.Developer;
 import com.semicolondevop.suite.model.developer.GithubDeveloperDao;
 
 import java.util.List;
-import java.util.Map;
 
 public interface DeveloperService {
 

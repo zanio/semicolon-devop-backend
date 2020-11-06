@@ -62,6 +62,7 @@ public class SpringFoxConfig  extends WebSecurityConfigurerAdapter {
                 .apiInfo(getApiInfo())
                 .tags(new Tag("Admin Services","All Api related to admin services"),
                         new Tag("Password Services","All Api related to Password services"),
+                        new Tag("Repository Services","All Api related to Repository services"),
                         new Tag("Developer Services","All Api related to Developer services"));
 
     }
@@ -101,9 +102,10 @@ public class SpringFoxConfig  extends WebSecurityConfigurerAdapter {
     private Predicate<String> paths() {
         return or(
                 regex("/api/admin.*"),
-                regex("/api/investment.*"),
+                regex("/api/repository.*"),
                 regex("/api/developers/all"),
-                regex("/api/developers.*")
+                regex("/api/developers.*"),
+                regex("/api/app.*")
         );
     }
 

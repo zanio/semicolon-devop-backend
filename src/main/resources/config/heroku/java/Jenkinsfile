@@ -11,7 +11,20 @@ node{
         sh "${MAVEN_CMD} clean package"
 
     }
-    stage("Build Docker"){
+    stage("Docker Build"){
+        echo 'building images'
+        sh "docker build -t zanio/spring-boot-example ."
+    }
+    stage("Docker Push"){
+        echo 'pushing to dockerhub'
+        withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-token', vaultUrl: 'http://67.205.152.207:8200'], vaultSecrets: [[path: 'docker/dockerhub', secretValues: [[envVar: 'username', vaultKey: 'USERNAME'], [envVar: 'password', vaultKey: 'PASSWORD']]]]){
+
+            sh "docker login -u $USERNAME -p $PASSWORD"
+
+        }
+        sh 'docker push maduflavins/pivotaldevops'
+    }
+    stage("Rebuild Docker"){
         echo 'rebuilding image for heroku registry'
         sh "docker build -t {app_name} ."
     }

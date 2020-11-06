@@ -1,0 +1,3 @@
+CREATE DATABASE ds_suite;
+CREATE USER ds_suite WITH PASSWORD 'ds_suite_123';
+GRANT ALL PRIVILEGES ON DATABASE "ds_suite" to ds_suite;

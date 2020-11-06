@@ -49,22 +49,27 @@ public class App {
     @OneToOne
     private TechStack techStack;
 
+    @ApiModelProperty(hidden = true)
     @OneToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<AppLogger> appLoggers;
 
 
     @ManyToOne
+    @ApiModelProperty(hidden = true)
     private Developer developer;
 
-    @OneToOne
-    private Repository repository;
 
     @OneToMany
+    @ApiModelProperty(hidden = true)
     private Set<Env> envSet;
 
     public App(@NotNull App app) {
         this.domain = app.getDomain();
         this.title = app.getTitle();
+        this.description = app.getDescription();
+        this.name = app.getName();
+        this.techStack = app.getTechStack();
+
     }
 
     public void addEnv(Env env){

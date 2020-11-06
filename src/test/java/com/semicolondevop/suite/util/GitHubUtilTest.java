@@ -1,28 +1,19 @@
 package com.semicolondevop.suite.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.semicolondevop.suite.model.repository.dao.get.GithubRepoResponseDao;
+import com.semicolondevop.suite.util.github.GitHubUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -31,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @project com.semicolondevop.suite.util in ds-suite
  */
 
-@SpringBootTest
+//@SpringBootTest
 @Slf4j
 class GitHubUtilTest {
 
@@ -56,6 +47,8 @@ class GitHubUtilTest {
         List<GithubRepoResponseDao> responseDaoList = GitHubUtil.listAllRepository(json);
         log.info("The github response dao{}",responseDaoList);
     }
+
+
 
 
 }
