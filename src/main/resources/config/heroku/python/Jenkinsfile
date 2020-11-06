@@ -1,7 +1,7 @@
 node{
     stage('Git CheckOut'){
         echo 'BRANCH NAME: ' + env.BRANCH_NAME
-        git credentialsId: 'github', url: 'https://github.com/Maduflavins/mjt.git'
+        git credentialsId: 'github', url: '{github_url}'
 
     }
 
@@ -39,7 +39,7 @@ node{
     if(${BRANCH_NAME} == 'master' || ${BRANCH_NAME} == 'main'){
         sh 'docker tag pivotal:latest registry.heroku.com/${HEROKU_APP}/web'
           sh 'docker push registry.heroku.com/${HEROKU_APP}/web'
-          withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-token', vaultUrl: 'http://67.205.152.207:8200'], vaultSecrets: [[path: 'heroku/herokulogin', secretValues: [[envVar: 'Username', vaultKey: 'HEROKU_USERNAME'], [envVar: 'Password', vaultKey: 'HEROKU_TOKEN']]]]) {
+          withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-token', vaultUrl: '{vault_url}'], vaultSecrets: [[path: 'heroku/herokulogin', secretValues: [[envVar: 'Username', vaultKey: 'HEROKU_USERNAME'], [envVar: 'Password', vaultKey: 'HEROKU_TOKEN']]]]) {
              sh '''
         #!/bin/bash
         imageId=$(docker inspect registry.heroku.com/${HEROKU_APP}/web --format={{.Id}})

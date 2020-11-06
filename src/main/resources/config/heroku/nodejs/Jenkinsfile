@@ -5,14 +5,15 @@ node{
 
     }
     stage("Build Artifact"){
-        echo 'running the major maven commands'
-        def MAVEN_HOME = tool name: 'maven', type: 'maven'
-        def MAVEN_CMD = "${MAVEN_HOME}/bin/mvn"
-        sh "${MAVEN_CMD} clean package"
+        echo 'Building the application'
+        sh 'npm install'
 
     }
+    stage('Test'){
+        sh 'npm test'
+    }
     stage("Build Docker"){
-        echo 'rebuilding image for heroku registry'
+        echo 'building image for heroku registry'
         sh "docker build -t {app_name} ."
     }
     stage("Deploy Heroku"){
