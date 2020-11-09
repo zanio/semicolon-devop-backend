@@ -2,10 +2,13 @@ package com.semicolondevop.suite;
 
 import com.cdancy.jenkins.rest.JenkinsClient;
 import com.cloudinary.Cloudinary;
+import com.semicolondevop.suite.model.app.App;
 import com.semicolondevop.suite.util.helper.Encoder_Decoder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,7 +39,11 @@ public class SuiteApplication {
     private String jenkinsUrl;
 
     public static void main(String[] args) {
-        SpringApplication.run(SuiteApplication.class, args);
+
+            SpringApplication.run(SuiteApplication.class, args);
+
+
+//        SpringApplication.run
     }
 
 

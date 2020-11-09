@@ -56,7 +56,7 @@ class DeveloperRepositoryTest {
     @Test
     void createDeveloper(){
         GithubDeveloperDao githubDeveloperDao = new GithubDeveloperDao();
-        githubDeveloperDao.setPhoneNUmber("09034134521");
+        githubDeveloperDao.setPhoneNumber("09034134521");
         githubDeveloperDao.setAuthId("yreyruy dfhgjhgjh jhgjfh");
         githubDeveloperDao.setAvatar_url("http://localhost:3000/");
         githubDeveloperDao.setPassword("ascdf");
