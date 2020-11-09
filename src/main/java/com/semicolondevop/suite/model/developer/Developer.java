@@ -95,7 +95,7 @@ public class Developer {
     public Developer(@NotNull GithubDeveloperDao githubDeveloperDao){
         this.firstname = githubDeveloperDao.getUserFirstname();
         this.lastname = githubDeveloperDao.getUserLastname();
-        this.phoneNumber = githubDeveloperDao.getPhoneNUmber();
+        this.phoneNumber = githubDeveloperDao.getPhoneNumber();
         this.imageUrl = githubDeveloperDao.getAvatar_url();
         this.password = githubDeveloperDao.getPassword();
         this.authId = githubDeveloperDao.getAuthId();

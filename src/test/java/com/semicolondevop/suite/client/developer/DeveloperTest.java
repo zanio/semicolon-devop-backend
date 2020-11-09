@@ -128,7 +128,7 @@ public class DeveloperTest {
                if (Objects.requireNonNull(response.getBody()).getLogin() != null) {
                    GithubDeveloperDao githubDeveloperDao = response.getBody();
                    githubDeveloperDao.setPassword(passwordEncoder.encode("MasterCraft"));
-                   githubDeveloperDao.setPhoneNUmber("08167124344");
+                   githubDeveloperDao.setPhoneNumber("08167124344");
                    githubDeveloperDao.setAuthId(authId);
                    ApplicationUser applicationUser = new ApplicationUser(githubDeveloperDao);
                    userRepositoryImpl.save(applicationUser);

@@ -8,6 +8,7 @@ import com.semicolondevop.suite.model.repository.Repository;
 import com.semicolondevop.suite.model.repository.dao.post.RepoResponsePush;
 import com.semicolondevop.suite.repository.github.GithubRepository;
 import com.semicolondevop.suite.service.app.AppService;
+import com.semicolondevop.suite.service.app.AppServiceImpl;
 import com.semicolondevop.suite.service.jenkins.JenkinsServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,7 +39,8 @@ import java.util.Map;
 @Api(value = "/api/app", tags = "App Services")
 public class AppController {
 
-    private final AppService appServiceImpl;
+    @Autowired
+    private AppService appServiceImpl ;
 
     @Autowired
     private GithubRepository githubRepositoryImpl;
@@ -46,10 +48,10 @@ public class AppController {
     @Autowired
     private JenkinsServiceImpl jenkinsServiceImpl;
 
-    @Autowired
-    public AppController(AppService appServiceImpl) {
-        this.appServiceImpl = appServiceImpl;
-    }
+//    @Autowired
+//    public AppController(AppService appServiceImpl) {
+//        this.appServiceImpl = appServiceImpl;
+//    }
 
     @PostMapping("/")
     @ApiOperation(value = "Create An Application ", notes = "Create your account to start runing test on our platform")

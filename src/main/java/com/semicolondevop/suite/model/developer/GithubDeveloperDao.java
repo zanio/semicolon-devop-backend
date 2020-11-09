@@ -25,7 +25,7 @@ public class GithubDeveloperDao {
     @ApiModelProperty(hidden = true)
     private String lastname ="";
 
-    private String phoneNUmber;
+    private String phoneNumber;
     private String authId;
 
     @ApiModelProperty(hidden = true)
